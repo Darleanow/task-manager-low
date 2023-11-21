@@ -8,5 +8,5 @@ const PORT = 3333;
 
 // App bootup
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
+  console.log(`Server boot on port: ${PORT}`);
 });
