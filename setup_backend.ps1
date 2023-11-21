@@ -5,16 +5,49 @@ param(
     [string]$scriptPath = "./Backend/logic.sql"
 )
 
-# Définition du chemin complet vers le script SQL
+# Function to check if a command is available
+function Test-CommandExists {
+    param($command)
+    $exists = $false
+    try {
+        if (Get-Command $command -ErrorAction Stop) {
+            $exists = $true
+        }
+    }
+    catch {
+        $exists = $false
+    }
+    return $exists
+}
+
+# Check for MySQL
+if (-not (Test-CommandExists "mysql")) {
+    Write-Host "MySQL is not installed or not in PATH. Please install it and try again."
+    exit
+}
+
+# Check for node
+if (-not (Test-CommandExists "node")) {
+    Write-Host "node is not installed or not in PATH. Please install it and try again."
+    exit
+}
+
+# Check for npm
+if (-not (Test-CommandExists "npm")) {
+    Write-Host "npm is not installed or not in PATH. Please install it and try again."
+    exit
+}
+
+# Alias SQL script as full path
 $fullScriptPath = Resolve-Path $scriptPath
 
-# Préparation de la commande MySQL
+# Preparates MySQL command
 $mysqlCommand = "mysql -h $dbH -u $dbU"
 if ($dbP -ne "PASS") {
     $mysqlCommand += " -p$dbP"
 }
 
-# Exécution de la commande MySQL
+# Executes MySQL command
 $mysqlProcessInfo = New-Object System.Diagnostics.ProcessStartInfo
 $mysqlProcessInfo.FileName = "cmd.exe"
 $mysqlProcessInfo.RedirectStandardInput = $true
@@ -26,7 +59,7 @@ $mysqlProcess.StandardInput.WriteLine("source $fullScriptPath")
 $mysqlProcess.StandardInput.Close()
 $mysqlProcess.WaitForExit()
 
-# Vérifier le résultat de l'exécution
+# Checks output
 if ($mysqlProcess.ExitCode -ne 0) {
     Write-Host "Error occurred during SQL execution"
     exit
