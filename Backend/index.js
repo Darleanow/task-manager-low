@@ -1,9 +1,9 @@
 // Express package
 const express = require("express");
 // Mysql package
-const mysql = require("mysql");
+const mysql = require("mysql2");
 // dotenv package
-const { config } = require('dotenv');
+const { config } = require("dotenv");
 
 // App settings
 const app = express();
@@ -17,6 +17,14 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+});
+
+// Database connection
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log("Success connecting to MySQL");
 });
 
 // App bootup
