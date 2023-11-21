@@ -1,17 +1,26 @@
-CREATE TABLE Projects (
+CREATE DATABASE IF NOT EXISTS TaskManagerLow;
+
+USE TaskManagerLow;
+
+CREATE TABLE IF NOT EXISTS Projects (
     project_id INT PRIMARY KEY AUTO_INCREMENT,
     project_name VARCHAR(255) NOT NULL,
     project_description TEXT
 );
 
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Tasks (
+CREATE TABLE IF NOT EXISTS Statuses (
+    status_id INT PRIMARY KEY AUTO_INCREMENT,
+    status_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Tasks (
     task_id INT PRIMARY KEY AUTO_INCREMENT,
     project_id INT,
     task_name VARCHAR(255) NOT NULL,
@@ -24,12 +33,7 @@ CREATE TABLE Tasks (
     FOREIGN KEY (status_id) REFERENCES Statuses(status_id)
 );
 
-CREATE TABLE Statuses (
-    status_id INT PRIMARY KEY AUTO_INCREMENT,
-    status_name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE TaskAssignments (
+CREATE TABLE IF NOT EXISTS TaskAssignments (
     task_id INT,
     user_id INT,
     FOREIGN KEY (task_id) REFERENCES Tasks(task_id),
