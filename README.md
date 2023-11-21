@@ -49,4 +49,25 @@ git cleanbranch feature/new-feature
 
 This command creates a new branch named `feature/new-feature`, based on the latest updates from `develop`, and pushes it to the remote repository.
 
+### Automatic tabulation with `git-posh`
+
+To setup / enable the "automatic" tabulation within vscode (or persay, a powershell terminal), you will need to install a package:
+
+```ps1
+Install-Module posh-git -Scope CurrentUser
+```
+
+You will then need to import it to your current powershell session:
+
+```ps1
+Import-Module posh-git
+```
+
+Finally, if you want to always have it with you, add it to your profile:
+
+```ps1
+Add-PoshGitToProfile
+```
+
+
 ---
