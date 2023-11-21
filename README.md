@@ -1,29 +1,26 @@
-# Getting Started with Create React App
+# For devs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Setup your environment
 
-## Learn More
+Make sure you have `node`, `npm`, `mysql`, `git` installed, make also sure you're on windows.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can then run the `setup_backend.ps1` script, make sure to read the [Setup backend instructions](./Setup.md) before running it as you need to provide your mysql configuration.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Then, you can enter the following command to create clean branches from `origin/develop`:
 
-### Analyzing the Bundle Size
+```bash
+git config --global alias.cleanbranch '!f() { git checkout origin/develop && git fetch && git pull origin develop && git checkout -b "$@" && git push -u origin "$@"; }; f'
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+**Basically, this alias does the following**:
 
-### Making a Progressive Web App
+- Checks out origin/develop: This ensures you are starting from the latest state of the develop branch.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Fetches and Pulls from origin/develop: This updates your local develop branch with the latest changes from the remote.
 
-### Advanced Configuration
+- Creates a New Branch: It creates a new branch with the name you provide.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Pushes the New Branch to Remote: It then pushes the newly created branch to the remote repository (origin) and sets up tracking, so origin/<branch-name> is linked to your local branch.
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Usage**:
+`git cleanbranch feature/new-feature`
