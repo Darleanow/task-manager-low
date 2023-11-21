@@ -27,6 +27,24 @@ db.connect((err) => {
   console.log("Success connecting to MySQL");
 });
 
+// Project creation endpoint
+app.post('/add_endpoint', (req, res) => {
+  const data = req.body; // Les données reçues du frontend
+  
+  console.log("data received: ", data);
+
+  //const query = 'INSERT INTO ';
+
+  // db.query(query, data, (err, result) => {
+  //     if (err) {
+  //         // Gestion des erreurs de la base de données
+  //         res.status(500).send('Erreur lors de l\'insertion dans la base de données');
+  //     } else {
+  //         res.status(201).send('Données ajoutées avec succès');
+  //     }
+  // });
+});
+
 // App bootup
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);

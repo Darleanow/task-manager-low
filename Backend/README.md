@@ -15,3 +15,18 @@ You will see a log, once it boots up like so:
 ```bash
 Server listening on port: 3333
 ```
+
+
+### Examples Web Requests
+
+Trying to send UTF-8 encoding based string to our server:
+```ps1
+> $body = '{"truc": "à la con"}'
+> $encodedBody = [System.Text.Encoding]::UTF8.GetBytes($body)
+> Invoke-WebRequest -Uri "http://localhost:3333/add_endpoint" -Method POST -ContentType "application/json" -Body $encodedBody
+```
+
+Returns:
+```json
+data received:  { truc: 'à la con' }
+```
