@@ -1,29 +1,73 @@
-# Getting Started with Create React App
+# Developer Setup Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Environment Setup
 
-## Learn More
+Before you begin, ensure that your Windows environment is properly set up with the necessary tools. Here's a checklist:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Node.js**: Required for running JavaScript on the server-side.
+- **npm**: Node's package manager, used for managing JavaScript dependencies.
+- **MySQL**: A relational database management system.
+- **Git**: Version control system for tracking changes in source code.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Initial Steps
 
-### Analyzing the Bundle Size
+1. **Install Required Software**:
+   - Ensure `node`, `npm`, `mysql`, and `git` are installed on your system.
+   - Verify the installations by running `node -v`, `npm -v`, `mysql --version`, and `git --version` in your command prompt.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. **Run Setup Script**:
+   - Execute the `setup_backend.ps1` PowerShell script to configure the backend.
+   - **Important**: Before running the script, please read the [Setup Backend Instructions](./Setup.md) thoroughly. You will need to provide your MySQL configuration details during the setup.
 
-### Making a Progressive Web App
+## Git Configuration for Efficient Branch Management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+To streamline the process of working with Git branches, especially when dealing with updates from the `develop` branch, use the following Git alias.
 
-### Advanced Configuration
+### Setting Up the `cleanbranch` Alias
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+git config --global alias.cleanbranch '!f() { git checkout origin/develop && git fetch && git pull origin develop && git checkout -b "$@" && git push -u origin "$@"; }; f'
+```
 
-### Deployment
+#### What This Alias Does
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Checks out `origin/develop`**:
+  - Ensures you start from the latest state of the `develop` branch.
+- **Fetches and Pulls from `origin/develop`**:
+  - Updates your local `develop` branch with the latest changes from the remote.
+- **Creates a New Branch**:
+  - Generates a new branch with the name you specify.
+- **Pushes the New Branch to Remote**:
+  - Pushes the new branch to `origin` and sets up tracking, linking `origin/<branch-name>` with your local branch.
 
-### `npm run build` fails to minify
+#### Usage Example
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To create and push a new feature branch:
+```bash
+git cleanbranch feature/new-feature
+```
+
+This command creates a new branch named `feature/new-feature`, based on the latest updates from `develop`, and pushes it to the remote repository.
+
+### Automatic tabulation with `git-posh`
+
+To setup / enable the "automatic" tabulation within vscode (or persay, a powershell terminal), you will need to install a package:
+
+```ps1
+Install-Module posh-git -Scope CurrentUser
+```
+
+You will then need to import it to your current powershell session:
+
+```ps1
+Import-Module posh-git
+```
+
+Finally, if you want to always have it with you, add it to your profile:
+
+```ps1
+Add-PoshGitToProfile
+```
+
+
+---
