@@ -28,21 +28,24 @@ db.connect((err) => {
 });
 
 // Project creation endpoint
-app.post('/add_endpoint', (req, res) => {
-  const data = req.body; // Les données reçues du frontend
-  
-  console.log("data received: ", data);
+app.post("/add_project", (req, res) => {
+  const { project_name, project_description } = req.body;
 
-  //const query = 'INSERT INTO ';
+  console.log("data received: ", req.body);
 
-  // db.query(query, data, (err, result) => {
-  //     if (err) {
-  //         // Gestion des erreurs de la base de données
-  //         res.status(500).send('Erreur lors de l\'insertion dans la base de données');
-  //     } else {
-  //         res.status(201).send('Données ajoutées avec succès');
-  //     }
-  // });
+  const query =
+    "INSERT INTO projects (project_name, project_description) VALUES (?, ?)";
+
+  db.query(query, [project_name, project_description], (err, result) => {
+    if (err) {
+      console.error(err);
+      res
+        .status(500)
+        .send("Erreur lors de l'insertion dans la base de données");
+    } else {
+      res.status(201).send("Données ajoutées avec succès");
+    }
+  });
 });
 
 // App bootup
