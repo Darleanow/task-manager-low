@@ -26,7 +26,7 @@ To streamline the process of working with Git branches, especially when dealing 
 ### Setting Up the `cleanbranch` Alias
 
 ```bash
-git config --global alias.cleanbranch '!f() { git checkout origin/develop && git fetch && git pull origin develop && git checkout -b "$@" && git push -u origin "$@"; }; f'
+git config --global alias.cleanbranch '!f() { git checkout origin/develop && git fetch && git pull origin develop && git checkout -b "$@" && git push -u origin "$@" && git fetch --prune && git branch --merged | grep -v "\*" | grep -v "release" | grep -v "develop" | xargs -n 1 git branch -d; }; f'
 ```
 
 #### What This Alias Does
