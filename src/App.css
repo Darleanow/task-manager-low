@@ -44,13 +44,18 @@
   align-items: center;
   justify-content: center;
   font-size: 2vh;
+  transition: background-color 0.3s ease;
+}
+.new-project-button:hover {
+  background-color: #d8b6f1; 
+  color: white;
 }
 .body-content {
   width: 80vw;
   height: 70vh;
   display: flex;
   flex-direction: row;
-  border: 2px dotted #484848;
+  border: 4px dotted #484848;
   margin-left: 10vw;
   margin-top: 5vh;
   border-radius: 16px;
