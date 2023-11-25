@@ -1,0 +1,35 @@
+.cd-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: baseline;
+    flex-direction: column;
+    padding: 1vh 0.5vw;
+}
+
+.cd-task_title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: bold;
+}
+
+.cd-task_id {
+    color: rgb(102, 102, 102);
+}
+
+.cd-tags {
+    display: flex;
+    flex-direction: row;
+}
+
+.cd-weight{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.cd-flex_bottom_card {
+    display: flex;
+    flex-direction: row;
+}
