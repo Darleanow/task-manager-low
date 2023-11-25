@@ -1,5 +1,5 @@
-import "./App.css";
-
+import './App.scss';
+import ProjectPage from './ProjectPage/ProjectPage';
 function App() {
 
   const hasProjects = false;
