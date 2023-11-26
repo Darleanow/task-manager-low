@@ -1,7 +1,6 @@
-import "./App.css";
-
-function App() {
-
+import "./App.scss";
+import ProjectPage from "./ProjectPage/ProjectPage";
+const App = () => {
   const hasProjects = false;
 
   return (
@@ -17,15 +16,14 @@ function App() {
             // Display this if there are projects
             <p>Test</p>
           ) : (
-            // Display this if there are no projects
             <>
               <div className="content-left">
                 <img src="/images/3d-boy.png" alt="3D Boy" />
               </div>
               <div className="content-right">
-                <p>No projects</p>
-                <p> yet.</p>
-                <p>Create one!</p>
+                <p className="a-text_centered">No projects yet.</p>
+                <br />
+                <p className="a-text_centered">Create one!</p>
               </div>
             </>
           )}
@@ -36,6 +34,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
