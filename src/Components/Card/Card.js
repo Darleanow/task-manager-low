@@ -1,24 +1,13 @@
 import React from "react";
+import { FaBalanceScale } from "react-icons/fa";
 import {
   getTextColorFromBackground,
   getTextColorFromDueDate,
   formatDate,
+  MinidenticonImg,
 } from "../../Utils/BulkUtilsImport";
-import { FaBalanceScale } from "react-icons/fa";
-
 import "./Card.scss";
 
-/**
- * Card component has 5 parameters:
- * - *p_Name*: Used for the name of the task
- * - *p_Description*: Used for the description of the task
- * - *p_Tags*: Is an array of tags containing tag name, and its color
- * - *p_Weight*: Used for the weight of the task
- * - *p_User*: Is some infos about the user, name and picture in base64
- *
- * And returns a modal card that can be clicked to
- * access its description for example
- */
 const Card = ({
   p_Name,
   p_Description,
@@ -29,43 +18,47 @@ const Card = ({
   p_User,
 }) => {
   return (
-    <>
-      <div className="cd-container">
-        <p className="cd-task_title">
-          {p_Name} <p className="cd-task_id"> #{p_TaskId} </p>
-          <FaBalanceScale />
-          {p_Weight}
-        </p>
-        <div className="cd-tags">
-          {p_Tags.map((tag, index) => (
-            <span
-              key={index}
+    <div className="cd-container">
+      <div className="cd-task_details">
+        <div className="cd-title_and_id">
+          <font className="cd-task_name">
+            {p_Name}
+            <font className="cd-task_id"> #{p_TaskId} </font>
+            <font
+              className="cd-task_date"
               style={{
-                backgroundColor: tag[1],
-                color: getTextColorFromBackground(tag[1]),
+                color: getTextColorFromDueDate(p_DueDate),
+                fontWeight: "bold",
               }}
             >
-              {tag[0]}
-            </span>
-          ))}
+              {p_DueDate ? formatDate(p_DueDate, false) : null}
+            </font>
+          </font>
         </div>
-        <div className="cd-flex_bottom_card">
-          <p
-            style={{
-              color: getTextColorFromDueDate(p_DueDate),
-              fontWeight: "bold",
-            }}
-          >
-            {p_DueDate ? formatDate(p_DueDate, false) : null}
-          </p>
-          <div className="cd-weight"></div>
-
-          <div>
-            {/*<img src={p_User[0].user_picture} alt="cd-User created" /> */}
-          </div>
-        </div>
+        <MinidenticonImg
+          username={p_User.user_name}
+          saturation="90"
+          width="19"
+          height="19"
+          className="p-user_profile_picture_task"
+        />
       </div>
-    </>
+      <div className="cd-tags">
+        {p_Tags.map((tag, index) => (
+          <span
+            key={index}
+            style={{
+              backgroundColor: tag[1],
+              color: getTextColorFromBackground(tag[1]),
+            }}
+            className="cd-tag"
+          >
+            {tag[0]}
+          </span>
+        ))}
+      </div>
+      <div className="cd-flex_bottom_card"></div>
+    </div>
   );
 };
 

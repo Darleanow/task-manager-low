@@ -1,38 +1,128 @@
 // Define color variables
-$color-task-id: rgb(102, 102, 102);
+$color-task-id: #898989;
+$color-background: #3e3e3e;
+$color-text: #fff;
 
-// Mixin for common flexbox setup
-@mixin flex-row-center {
+// Fonts and styles
+$font-family: Inter;
+$font-size: 20px;
+$font-style: normal;
+$font-weight: 500;
+$line-height: normal;
+
+// Mixin for common flexbox setups
+@mixin flex-align($justify: center) {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  justify-content: $justify;
 }
 
+// Card Container
 .cd-container {
-  display: flex;
-  align-items: baseline;
+  @include flex-align(baseline);
   flex-direction: column;
-  padding: 1vh 0.5vw;
+  border-radius: 4px;
+  background-color: $color-background;
+  padding: 10px;
+  margin: 0 10px;
+  margin-right: 25px;
+  min-height: 10vh;
+  transition: 0.2s ease-in;
+  user-select: none;
+}
 
-  .cd-task_title {
-    @include flex-row-center;
-    font-weight: bold;
-  }
+.cd-container:hover,
+.cd-container:active,
+.cd-container:focus {
+  background-color: #4d4d4d;
+  transition: 0.2s ease-in;
+}
+.cd-container:focus-visible {
+  outline: none;
+  stroke: none;
+}
 
-  .cd-task_id {
-    color: $color-task-id;
-  }
+// Task Details
+.cd-task_details {
+  @include flex-align(start);
+  width: 80%;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
 
-  .cd-tags {
-    @include flex-row-center;
-  }
+.cd-title_and_id {
+  @include flex-align(baseline);
+  justify-content: space-between;
+  color: $color-text;
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  line-height: $line-height;
+  flex-grow: 1;
+}
 
-  .cd-weight {
-    @include flex-row-center;
-  }
+.cd-task_name {
+  color: #fff;
+  font-family: Inter;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-align: start;
+}
 
-  .cd-flex_bottom_card {
-    @include flex-row-center;
-  }
+.cd-task_id {
+  color: #898989;
+  font-family: Inter;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+// User Profile Picture
+.p-user_profile_picture_task {
+  border-radius: 50%;
+  width: 29px;
+  height: 29px;
+  background-color: #585858;
+  background: lightgray 50% / cover no-repeat;
+  margin-right: -3vw;
+  margin-left: 1vw;
+}
+
+.cd-task_date {
+  font-size: 20px;
+}
+
+// Due Date
+.cd-due_date {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+// Tags
+.cd-tags {
+  @include flex-align(baseline);
+  gap: 9px;
+  margin-bottom: 20px;
+}
+
+.cd-tag {
+  font-family: Inter;
+  font-size: 1em;
+  padding: 3px 10px;
+  border-radius: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+// Weight
+.cd-weight {
+  @include flex-align(center);
+}
+
+// Bottom Card Flex
+.cd-flex_bottom_card {
+  @include flex-align(center);
 }
