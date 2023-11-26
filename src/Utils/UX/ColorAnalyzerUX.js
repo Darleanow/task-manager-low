@@ -15,7 +15,7 @@ export function getTextColorFromBackground(p_Color) {
   const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 
   // If luminance below 128, text will be white, else black
-  return luminance < 220 ? "#FFFFFF" : "#000000";
+  return luminance < 240 ? "#FFFFFF" : "#000000";
 }
 
 /**
@@ -35,5 +35,5 @@ export function getTextColorFromDueDate(p_Date) {
   // Difference is made in days
   const daysDifference = difference / (1000 * 3600 * 24);
 
-  return daysDifference < 7 ? "#C70039" : "#000000";
+  return daysDifference < 7 ? "#242424" : "#000000";
 }
