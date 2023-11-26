@@ -118,7 +118,7 @@ $font-primary: "Inter", sans-serif;
 // User Profile Picture
 .p-user_profile_picture {
   background-color: $profile-bg;
-  border-radius: 9999px;
+  border-radius: 100%;
   user-select: none;
   margin-right: 1vw;
   background: lightgray 50% / cover no-repeat;
