@@ -37,10 +37,10 @@ $font-primary: "Inter", sans-serif;
 .pmb-menu_bar_primary {
   @include flex-center;
   justify-content: space-between;
-  position: fixed;
+  position: relative;
   background-color: $primary-bg;
   width: 100vw;
-  height: 10.55%;
+  height: 10.55vh;
   color: white;
   user-select: none;
   padding: 0;
