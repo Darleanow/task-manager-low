@@ -70,10 +70,10 @@ $font-family-inter: "Inter", sans-serif;
     background: $color-dropdown-bg;
     padding-left: 10px;
     margin-left: 50px;
-  }
 
-  .smb-dropdown_option {
-    @include text-style(1.7vh);
+    .smb-dropdown_option {
+      @include text-style(1.7vh);
+    }
   }
 
   .smb-search_filters_container {
