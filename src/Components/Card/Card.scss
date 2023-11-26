@@ -1,35 +1,38 @@
+// Define color variables
+$color-task-id: rgb(102, 102, 102);
+
+// Mixin for common flexbox setup
+@mixin flex-row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 .cd-container {
-    display: flex;
-    align-items: baseline;
-    justify-content: baseline;
-    flex-direction: column;
-    padding: 1vh 0.5vw;
-}
+  display: flex;
+  align-items: baseline;
+  flex-direction: column;
+  padding: 1vh 0.5vw;
 
-.cd-task_title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  .cd-task_title {
+    @include flex-row-center;
     font-weight: bold;
-}
+  }
 
-.cd-task_id {
-    color: rgb(102, 102, 102);
-}
+  .cd-task_id {
+    color: $color-task-id;
+  }
 
-.cd-tags {
-    display: flex;
-    flex-direction: row;
-}
+  .cd-tags {
+    @include flex-row-center;
+  }
 
-.cd-weight{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
+  .cd-weight {
+    @include flex-row-center;
+  }
 
-.cd-flex_bottom_card {
-    display: flex;
-    flex-direction: row;
+  .cd-flex_bottom_card {
+    @include flex-row-center;
+  }
 }
