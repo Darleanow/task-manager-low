@@ -1,109 +1,124 @@
-.App {
+.a-main_window {
   display: flex;
   flex-direction: column;
   font-family: "Inter", sans-serif;
-}
-
-.flex-container {
   width: 100vw;
-}
-.header {
-  height: 5vh;
-  background-color: #202020;
-}
-
-.body {
-  display: flex;
-  flex-direction: column;
-  height: 90vh;
+  height: 100vh;
   background-color: #252525;
 }
-.body-header {
-  width: 100vw;
-  height: 10vh;
-  display: flex;
-  flex-direction: row;
-}
-.all-projects-title {
-  width: 50vw;
-  color: #fff;
-  margin-top: 5vh;
-  margin-left: 5vw;
-  font-size: 4vh;
-}
-.new-project-button {
-  width: 10vw;
-  height: 5vh;
-  color: #fff;
-  background-color: #925dbb;
-  font-weight: 500;
-  text-align: center;
-  border-radius: 8px;
-  margin-top: 5vh;
-  margin-left: 30vw;
+
+.a-main_project_bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 2vh;
-  transition: background-color 0.2s ease-in;
-}
-.new-project-button:hover {
-  background-color: #a070c4;
-  transition: background-color 0.2s ease-in;
-  cursor: pointer;
+  justify-content: flex-start;
+  background: #202020;
+  box-shadow: 0px 0px 50px 5px rgba(20, 20, 20, 0.25);
+  height: 6.75rem;
+
+  .a-logo {
+    width: 3.4375rem;
+    height: 3.4375rem;
+    flex-shrink: 0;
+    fill: #d9d9d9;
+    margin-left: 2.38rem;
+  }
+
+  .a-title {
+    color: #fff;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: calc(2.19rem - 1.62rem);
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    display: flex;
+    width: 20.5625rem;
+    height: 2.9375rem;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .a-profile {
+    margin-left: auto;
+    margin-right: 1.63rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    flex-shrink: 0;
+    border-radius: 3.25rem;
+    background: url(../public/images/3d-boy.png),
+      lightgray 50% / cover no-repeat;
+  }
 }
 
-.body-content {
-  width: 80vw;
-  height: 70vh;
-  display: flex;
-  flex-direction: row;
-  border: 4px dotted #484848;
-  margin-left: 10vw;
-  margin-top: 5vh;
-  border-radius: 16px;
-}
-
-.content-left {
-  width: 30vw;
-}
-.content-left img {
-  margin-left: 10vw;
-  margin-top: 5vh;
-  max-width: 85%;
-  max-height: 85%;
-}
-
-.content-right {
+.a-second_bar {
+  border-bottom: 1px solid #505050;
+  background: #2e2e2e;
+  height: 5.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width: 70vw;
-  flex: 1;
-}
+  justify-content: flex-start;
+  .a-dropdown {
+    select {
+      margin-left: 4.12rem;
+      width: 11rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+      border-radius: 0.5rem;
+      border: 0.5px solid #969696;
+      background: #242424;
+      color: #969696;
+      font-family: "Inter", sans-serif;
+      font-size: 1rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
 
-.a-text_centered {
-  color: #fff;
-  text-align: center;
-  font-family: "Inter";
-  font-size: 64px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
+  .a-search_input {
+    .a-input_content {
+      margin-left: 1.87rem;
+      width: inherit;
+      height: inherit;
+      color: #acabab;
+      font-family: "Inter", sans-serif;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      border-radius: 0.5rem;
+      border: 0.5px solid #969696;
+      background: #333;
+      width: 50.75rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+    }
+  }
 
-.footer {
-  height: 5vh;
-  background-color: #252525;
-  color: #fff;
-  text-align: center;
-}
+  .a-button {
+    margin-left: auto;
+    width: 10.75rem;
+    height: 2.375rem;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    border: 1px solid #717171;
+    background: #232323;
+    color: #b4b4b4;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.125rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    transition: 0.2s ease-in;
+  }
 
-.all-projects-title,
-.new-project-button,
-.content-left,
-.content-right,
-.footer {
-  user-select: none;
+  .a-button:hover {
+    border: 2px solid #232323;
+    background: #444444;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+  }
 }

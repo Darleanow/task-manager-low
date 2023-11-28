@@ -4,33 +4,52 @@ const App = () => {
   const hasProjects = false;
 
   return (
-    <div className="App">
-      <div className="flex-container header"></div>
-      <div className="flex-container body">
-        <div className="body-header">
-          <div className="all-projects-title">All Projects</div>
-          <div className="new-project-button">New Project</div>
+    <div className="a-main_window">
+      <div className="a-main_project_bar">
+        <div className="a-logo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="49"
+            height="42"
+            viewBox="0 0 49 42"
+            fill="none"
+          >
+            <path d="M24.5 0L48.3157 41.25H0.684301L24.5 0Z" fill="#D9D9D9" />
+          </svg>
         </div>
-        <div className="body-content">
-          {hasProjects ? (
-            // Display this if there are projects
-            <p>Test</p>
-          ) : (
-            <>
-              <div className="content-left">
-                <img src="/images/3d-boy.png" alt="3D Boy" />
-              </div>
-              <div className="content-right">
-                <p className="a-text_centered">No projects yet.</p>
-                <br />
-                <p className="a-text_centered">Create one!</p>
-              </div>
-            </>
-          )}
+        <div className="a-title">Projects</div>
+        <div className="a-profile"></div>
+      </div>
+      <div className="a-second_bar">
+        <div className="a-dropdown">
+          <select name="visibility_filter" id="visibility_filter">
+            <option value="all">All</option>
+          </select>
+        </div>
+
+        <div className="a-search_input">
+          <input
+            type="text"
+            className="a-input_content"
+            placeholder="Search or filter..."
+          />
+        </div>
+
+        <div className="a-new_project_button">
+          <button className="a-button">New Project</button>
         </div>
       </div>
-      <div className="flex-container footer">
-        All rights reserved to Damien & Enzo. 2023.
+      <div className="a-main_content">
+        {" "}
+        {hasProjects ? (
+          /**Map projects */
+          <>
+            <p> Hello projects</p>
+            <button> test </button>
+          </>
+        ) : (
+          <div className="a-empty_projects"></div>
+        )}{" "}
       </div>
     </div>
   );
