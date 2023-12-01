@@ -61,7 +61,8 @@
   justify-content: flex-start;
   .a-dropdown {
     select {
-      margin-left: 4.12rem;
+      text-indent: 10px;
+      margin-left: 2vw;
       width: 11rem;
       height: 2.5rem;
       flex-shrink: 0;
@@ -79,26 +80,27 @@
 
   .a-search_input {
     .a-input_content {
-      margin-left: 1.87rem;
+      margin-left: 3vw;
       width: inherit;
       height: inherit;
       color: #acabab;
       font-family: "Inter", sans-serif;
-      font-size: 0.875rem;
+      font-size: 1rem;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
       border-radius: 0.5rem;
       border: 0.5px solid #969696;
       background: #333;
-      width: 50.75rem;
+      width: 68vw;
       height: 2.5rem;
       flex-shrink: 0;
+      text-indent: 15px;
     }
   }
 
   .a-button {
-    margin-left: auto;
+    margin-left: 2vw;
     width: 10.75rem;
     height: 2.375rem;
     flex-shrink: 0;
@@ -107,7 +109,7 @@
     background: #232323;
     color: #b4b4b4;
     text-align: center;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 1.125rem;
     font-style: normal;
     font-weight: 400;
@@ -122,3 +124,46 @@
     cursor: pointer;
   }
 }
+
+.a-empty_projects {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .a-svg {
+    margin-top: 10vh;
+  }
+
+  .a-empty_text {
+    width: 40%;
+    margin-top: 3rem;
+    color: #8d8d8d;
+    text-align: center;
+    font-family: Inter;
+    font-size: 4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+}
+
+.a-main_content {
+  width: 100vw;
+
+  .a-project_list {
+    display: flex;
+    flex-wrap: wrap;
+
+    .a-project_child {
+      flex: 0 0 calc(50% - 10px); /* Ajoute du padding entre les éléments si nécessaire */
+      box-sizing: border-box;
+      background-color: red;
+      margin: 5px; /* Ajoute une marge entre les éléments si nécessaire */
+    }
+  }
+}
+
+
