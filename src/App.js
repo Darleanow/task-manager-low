@@ -26,7 +26,7 @@ const projects = [
       "Bootstrap is a project that brings the css wrapper already huge, to another leve...",
     issue_count: 0,
     isFav: false,
-  }
+  },
 ];
 
 const App = () => {
@@ -74,7 +74,17 @@ const App = () => {
             {projects.map((project) => (
               <div key={project.id}>
                 <div className="a-project_child">
-                  <p>{project.name}</p>
+                  <div className="a-placeholder_projectIcon">
+                    <p className="a-placeholder_text_icon">
+                      {project.name.at(0)}
+                    </p>
+                  </div>
+                  <div className="a-project_info">
+                    <p className="a-project_title">{project.name}</p>
+                    <p className="a-project_description">
+                      {project.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
