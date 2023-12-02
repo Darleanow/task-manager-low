@@ -1,0 +1,14 @@
+html, body {
+  background-color: #252525;
+}
+
+.pp-menu_holder {
+  display: flex;
+  flex-direction: column;
+}
+
+.pp-main_content {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+}
