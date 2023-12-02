@@ -278,22 +278,26 @@
 }
 
 @keyframes border-glow {
-  0%, 100% {
+  0%,
+  100% {
     border-color: rgba(255, 255, 255, 0);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0); /* Très diffus et très doux */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0);
   }
-  10%, 40% {
-    border-top-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour le haut */
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); /* Très légère brillance */
+  10%,
+  40% {
+    border-top-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
   }
-  30%, 60% {
-    border-right-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour la droite */
+  30%,
+  60% {
+    border-right-color: rgba(255, 255, 255, 0.2);
   }
-  50%, 80% {
-    border-bottom-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour le bas */
+  50%,
+  80% {
+    border-bottom-color: rgba(255, 255, 255, 0.2);
   }
-  70%, 90% {
-    border-left-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour la gauche */
+  70%,
+  90% {
+    border-left-color: rgba(255, 255, 255, 0.2);
   }
 }
-

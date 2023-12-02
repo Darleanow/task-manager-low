@@ -1,5 +1,7 @@
 import "./App.scss";
 import ProjectPage from "./ProjectPage/ProjectPage";
+import { IoBookmark } from "react-icons/io5";
+import { IoBookmarkOutline } from "react-icons/io5";
 
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
@@ -80,7 +82,16 @@ const App = () => {
                     </p>
                   </div>
                   <div className="a-project_info">
-                    <p className="a-project_title">{project.name}</p>
+                    <div className="a-project_title_and_favs">
+                      <p className="a-project_title">{project.name}</p>
+                      <button
+                        onClick={() => {
+                          project.isFav = !project.isFav;
+                        }}
+                      >
+                        {project.isFav ? <IoBookmark /> : <IoBookmarkOutline />}
+                      </button>
+                    </div>
                     <p className="a-project_description">
                       {project.description}
                     </p>
