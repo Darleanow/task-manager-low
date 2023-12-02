@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Projects (
 -- Table des Utilisateurs contenant les informations d'identification et les contacts
 CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE, -- Assure que les noms d'utilisateur sont uniques
+    full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE, -- Assure que les e-mails sont uniques
     password VARCHAR(255) NOT NULL -- Devrait être stocké comme un hash, pas en clair
 );
