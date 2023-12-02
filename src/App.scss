@@ -196,11 +196,16 @@
         background: #404040;
         width: 7vw;
         height: 12vh;
+        min-width: 6vw;
+        min-height: 12vh;
         margin-left: 2vw;
         margin-top: 3vh;
         display: flex;
         justify-content: center;
         align-items: center;
+        transition: 0.2s ease-in;
+        border: 2px solid transparent;
+        position: relative;
 
         .a-placeholder_text_icon {
           color: #fff;
@@ -213,12 +218,33 @@
         }
       }
 
+      .a-placeholder_projectIcon::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 2px solid transparent;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0);
+      }
+
       .a-project_info {
         display: flex;
-        flex-direction: column;;
+        flex-direction: column;
         margin-left: 1vw;
-        height: 12vh;
-        
+        margin-top: 2vh;
+        height: 14vh;
+        justify-content: center;
+        padding: 0;
+
+        .a-project_title,
+        .a-project_description {
+          margin: 0;
+          line-height: 1.2;
+          text-overflow: ellipsis;
+        }
+
         .a-project_title {
           color: #fff;
           font-family: Inter;
@@ -243,5 +269,31 @@
       border-color: #505050; /* Change border color on hover */
       cursor: pointer;
     }
+
+    .a-project_child:hover .a-placeholder_projectIcon {
+      animation: border-glow 3s ease-in-out infinite;
+      transition: 0.2s ease-in;
+    }
   }
 }
+
+@keyframes border-glow {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0); /* Très diffus et très doux */
+  }
+  10%, 40% {
+    border-top-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour le haut */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); /* Très légère brillance */
+  }
+  30%, 60% {
+    border-right-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour la droite */
+  }
+  50%, 80% {
+    border-bottom-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour le bas */
+  }
+  70%, 90% {
+    border-left-color: rgba(255, 255, 255, 0.2); /* Transition très douce pour la gauche */
+  }
+}
+
