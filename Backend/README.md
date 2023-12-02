@@ -1,5 +1,20 @@
 # Backend
 
+## Setup
+
+First, you will need to run
+```ps
+npm i
+```
+To install dependencies
+--- 
+Then, you will have to run, in a python cli:
+```py
+import os
+print(os.urandom(64).hex())
+```
+To generate a JWT_TOKEN, then add it in your `.env` file, other steps are described in the main `README`
+
 ## How to run
 
 To run the backend properly, please make sure that you've used the `setup_backend.ps1` script before, it will set you the database up before running the app, so you have no issues whilst running it.
