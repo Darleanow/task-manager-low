@@ -1,118 +1,129 @@
-import "./App.scss";
-import ProjectPage from "./ProjectPage/ProjectPage";
-import { IoBookmark } from "react-icons/io5";
-import { IoBookmarkOutline } from "react-icons/io5";
-
-const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
-
-const projects = [
-  {
-    name: "Project 1",
-    description:
-      "Here’s a sample description that gets cut if it’s too long, but it needs to be really long",
-    issue_count: 40,
-    isFav: true,
-  },
-
-  {
-    name: "Bootstrap",
-    description:
-      "Bootstrap is a project that brings the css wrapper already huge, to another leve...",
-    issue_count: 0,
-    isFav: false,
-  },
-
-  {
-    name: "Bootstrap 2",
-    description:
-      "Bootstrap is a project that brings the css wrapper already huge, to another leve...",
-    issue_count: 0,
-    isFav: false,
-  },
-];
+import React, { useEffect, useState } from "react";
 
 const App = () => {
-  const hasProjects = true;
+  const [isLogged, setIsLogged] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
 
-  return (
-    <div className="a-main_window">
-      <div className="a-main_project_bar">
-        <div className="a-logo">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="49"
-            height="42"
-            viewBox="0 0 49 42"
-            fill="none"
-          >
-            <path d="M24.5 0L48.3157 41.25H0.684301L24.5 0Z" fill="#D9D9D9" />
-          </svg>
-        </div>
-        <div className="a-title">Projects</div>
-        <div className="a-profile"></div>
+  useEffect(() => {
+    if (!checkTokenValidity()) {
+      setIsLogged(false);
+    }
+  }, []);
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const response = await fetch("http://localhost:3333/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        full_name: fullName,
+        email: email,
+        password: password,
+      }),
+    });
+    if (response.ok) {
+      handleLogin(e);
+      setAlreadyRegistered(true);
+    } else {
+      const error = await response.text();
+      console.error("Registration error:", error);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const response = await fetch("http://localhost:3333/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email, password: password }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("tokenExpiry", Date.now() + 3600000); // 1 hour expiry
+      setIsLogged(true);
+    } else {
+      // Handle errors
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
+    setIsLogged(false);
+    window.location.reload();
+  };
+  
+
+  const checkTokenValidity = () => {
+    const tokenExpiry = localStorage.getItem("tokenExpiry");
+    return tokenExpiry && Date.now() <= parseInt(tokenExpiry);
+  };
+
+  // Render logic
+  if (isLogged || checkTokenValidity()) {
+    return (
+      <div className="a-main_content">
+        Hello
+        <button onClick={handleLogout}>Logout</button>
       </div>
-      <div className="a-second_bar">
-        <div className="a-dropdown">
-          <select name="visibility_filter" id="visibility_filter">
-            <option value="all">All</option>
-          </select>
-        </div>
-
-        <div className="a-search_input">
+    );
+  } else if (alreadyRegistered) {
+    return (
+      <div>
+        Please Log In
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        Welcome
+        <form onSubmit={handleRegister}>
           <input
             type="text"
-            className="a-input_content"
-            placeholder="Search or filter..."
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
           />
-        </div>
-
-        <div className="a-new_project_button">
-          <button className="a-button">New Project</button>
-        </div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <button type="submit">Register</button>
+        </form>
       </div>
-      <div className="a-main_content">
-        {hasProjects ? (
-          <div className="a-project_list">
-            {projects.map((project) => (
-              <div key={project.id}>
-                <div className="a-project_child">
-                  <div className="a-placeholder_projectIcon">
-                    <p className="a-placeholder_text_icon">
-                      {project.name.at(0)}
-                    </p>
-                  </div>
-                  <div className="a-project_info">
-                    <div className="a-project_title_and_favs">
-                      <p className="a-project_title">{project.name}</p>
-                      <button
-                        onClick={() => {
-                          project.isFav = !project.isFav;
-                        }}
-                      >
-                        {project.isFav ? <IoBookmark /> : <IoBookmarkOutline />}
-                      </button>
-                    </div>
-                    <p className="a-project_description">
-                      {project.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="a-empty_projects">
-            <div className="a-svg">
-              <img src={noProjects} alt="Empty Projects" />
-            </div>
-            <div className="a-empty_text">
-              There are no projects created yet
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default App;
