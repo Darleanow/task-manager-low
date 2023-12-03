@@ -116,31 +116,74 @@ const AuthentPage = () => {
   if ((alreadyRegistered || (fullName && email)) && canBeRedirected) {
     return (
       <div>
-        {fullName !== null ? (
-          <div className="ap-welcome_title">
-            Welcome back,<p className="ap-user_name">{fullName}</p>
+        <div className="ap-main_content">
+          <div className="ap-welcome">
+            <div className="ap-icon_container">
+              <div class="ap-icon"></div>
+            </div>
+            <div className="ap-text_container">
+              {fullName ? (
+                <>
+                  <div className="ap-welcome_title ap-bigger_margin">
+                    Welcome back,
+                  </div>
+                  <div className="ap-info_text">{fullName}</div>
+                </>
+              ) : (
+                <p className="ap-welcome_title ap-bigger_margin">
+                  Welcome back !
+                </p>
+              )}
+            </div>
           </div>
-        ) : (
-          <p className="ap-basic_login">Welcome back !</p>
-        )}
-        <form onSubmit={handleLogin}>
-          {email ? null : (
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-            />
-          )}
+        </div>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <button type="submit">Login</button>
+        <form onSubmit={handleLogin} className="ap-form">
+          <div className="ap-labels">
+            {email ? null : (
+              <label for="mail" className="ap-label">
+                Email
+              </label>
+            )}
+            <label for="password" className="ap-label">
+              Password
+            </label>
+          </div>
+          <div className="ap-input_container">
+            {email ? null : (
+              <input
+                type="email"
+                id="mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="ap-input_form"
+              />
+            )}
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="ap-input_form"
+            />
+          </div>
+          <button type="submit" className="ap-submit_form">
+            Login <FaArrowRightLong className="ap-arrow_icon" />
+          </button>
         </form>
+        <div className="ap-already_registered">
+          <button
+            onClick={() => {
+              setAlreadyRegistered(false);
+              setCanBeRedirected(!canBeRedirected);
+            }}
+            className="ap-button_log_in"
+          >
+            Click here to register
+          </button>
+        </div>
       </div>
     );
   } else {
