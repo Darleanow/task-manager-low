@@ -4,10 +4,17 @@ const express = require("express");
 const mysql = require("mysql2");
 // dotenv package
 const { config } = require("dotenv");
+// bcrypt package
+const bcrypt = require("bcrypt");
+// Json webtoken package
+const jwt = require("jsonwebtoken");
+// Cors package
+const cors = require("cors");
 
 // App settings
 const app = express();
 app.use(express.json());
+app.use(cors());
 config(); // setup dotenv
 const PORT = 3333; // Default port used for the server
 
@@ -44,6 +51,91 @@ app.post("/add_project", (req, res) => {
         .send("Erreur lors de l'insertion dans la base de données");
     } else {
       res.status(201).send("Données ajoutées avec succès");
+    }
+  });
+});
+
+// Account registration endpoint
+app.post("/register", async (req, res) => {
+  const { full_name, email, password } = req.body;
+
+  try {
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Insert the new user into the database
+    const query =
+      "INSERT INTO Users (full_name, email, password) VALUES (?, ?, ?)";
+    db.query(query, [full_name, email, hashedPassword], (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error during user registration");
+      } else {
+        res.status(201).send("User registered successfully");
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// User Login Endpoint
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  // Query the database for the user
+  const query = "SELECT * FROM Users WHERE email = ?";
+  db.query(query, [email], async (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error during login");
+    } else if (results.length > 0) {
+      // Check if the password is correct
+      const validPassword = await bcrypt.compare(password, results[0].password);
+      if (validPassword) {
+        // Create a token
+        const token = jwt.sign(
+          { user_id: results[0].user_id },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+        res.status(200).json({ token });
+      } else {
+        res.status(401).send("Invalid credentials");
+      }
+    } else {
+      res.status(404).send("User not found");
+    }
+  });
+});
+
+// Middleware to authenticate token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (token == null) return res.sendStatus(401); // if no token is present
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // if token is not valid
+    req.user = user;
+    next();
+  });
+};
+
+// Get User endpoint
+app.get("/user", authenticateToken, (req, res) => {
+  const query = "SELECT full_name, email FROM Users WHERE user_id = ?";
+  db.query(query, [req.user.user_id], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error fetching user data");
+    } else if (results.length > 0) {
+      res.status(200).json(results[0]);
+    } else {
+      res.status(404).send("User not found");
     }
   });
 });
