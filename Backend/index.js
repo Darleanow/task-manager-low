@@ -111,6 +111,35 @@ app.post("/login", (req, res) => {
   });
 });
 
+// Middleware to authenticate token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (token == null) return res.sendStatus(401); // if no token is present
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // if token is not valid
+    req.user = user;
+    next();
+  });
+};
+
+// Get User endpoint
+app.get("/user", authenticateToken, (req, res) => {
+  const query = "SELECT full_name, email FROM Users WHERE user_id = ?";
+  db.query(query, [req.user.user_id], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error fetching user data");
+    } else if (results.length > 0) {
+      res.status(200).json(results[0]);
+    } else {
+      res.status(404).send("User not found");
+    }
+  });
+});
+
 // App bootup
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
