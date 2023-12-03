@@ -1,10 +1,12 @@
 import React from "react";
+import { useParams } from "react-router";
 import PrimaryMenuBar from "../Components/PrimaryMenuBar/PrimaryMenuBar";
 import SecondaryMenuBar from "../Components/SecondaryMenuBar/SecondaryMenuBar";
 import BoardList from "../Components/BoardList/BoardList";
 import "./TasksPage.scss";
 
-const TasksPage = ({ projectId }) => {
+const TasksPage = () => {
+  const { projectId } = useParams();
   return (
     <>
       <div className="pp-menu_holder">
