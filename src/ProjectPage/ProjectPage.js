@@ -1,7 +1,8 @@
-import "./ProjectPage.scss";
 import TasksPage from "../TasksPage/TasksPage";
+import { useNavigate } from "react-router-dom";
 import { IoBookmark } from "react-icons/io5";
 import { IoBookmarkOutline } from "react-icons/io5";
+import "./ProjectPage.scss";
 
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
@@ -34,6 +35,15 @@ const projects = [
 const ProjectPage = () => {
   const hasProjects = true;
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
+    window.location.reload();
+    navigate("/login");
+  };
+
   return (
     <div className="a-main_window">
       <div className="a-main_project_bar">
@@ -49,7 +59,9 @@ const ProjectPage = () => {
           </svg>
         </div>
         <div className="a-title">Projects</div>
+        <button onClick={handleLogout}>Log out</button>
         <div className="a-profile"></div>
+        
       </div>
       <div className="a-second_bar">
         <div className="a-dropdown">

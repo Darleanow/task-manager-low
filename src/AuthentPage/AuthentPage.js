@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { FaArrowRightLong } from "react-icons/fa6";
+import "./AuthenPage.scss";
 
 const AuthentPage = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [canBeRedirected, setCanBeRedirected] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("");
   const [fullName, setFullName] = useState("");
 
   const [userData, setUserData] = useState(null);
@@ -13,14 +17,22 @@ const AuthentPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLogged || checkTokenValidity()) {
-      fetchUserData();
+    const savedEmail = localStorage.getItem("email");
+    const savedFullName = localStorage.getItem("fullName");
+    if (savedEmail) setEmail(savedEmail);
+    if (savedFullName) setFullName(savedFullName);
+
+    if (savedEmail && savedFullName) {
+      setCanBeRedirected(!canBeRedirected);
     }
 
-    if (!checkTokenValidity()) {
+    if (checkTokenValidity()) {
+      fetchUserData();
+    } else {
       setIsLogged(false);
     }
-  }, [isLogged]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -57,18 +69,13 @@ const AuthentPage = () => {
       const data = await response.json();
       localStorage.setItem("token", data.token);
       localStorage.setItem("tokenExpiry", Date.now() + 3600000); // 1 hour expiry
+      localStorage.setItem("email", email);
+      localStorage.setItem("fullName", fullName);
       setIsLogged(true);
-      navigate('/projects');
+      navigate("/projects");
     } else {
       // Handle errors
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiry");
-    setIsLogged(false);
-    window.location.reload();
   };
 
   const checkTokenValidity = () => {
@@ -96,68 +103,164 @@ const AuthentPage = () => {
       console.error(err);
     }
   };
+
   // Render logic
-  if (isLogged || checkTokenValidity()) {
-    return (
-      <div className="a-main_content">
-        Hello, {userData ? userData.full_name : "User"}
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    );
-  } else if (alreadyRegistered) {
+  if ((alreadyRegistered || (fullName && email)) && canBeRedirected) {
     return (
       <div>
-        Please Log In
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <button type="submit">Login</button>
+        <div className="ap-main_content">
+          <div className="ap-welcome">
+            <div className="ap-icon_container">
+              <div class="ap-icon"></div>
+            </div>
+            <div className="ap-text_container">
+              {fullName ? (
+                <>
+                  <div className="ap-welcome_title ap-bigger_margin">
+                    Welcome back,
+                  </div>
+                  <div className="ap-info_text">{fullName}</div>
+                </>
+              ) : (
+                <p className="ap-welcome_title ap-bigger_margin">
+                  Welcome back !
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleLogin} className="ap-form">
+          <div className="ap-labels">
+            {email ? null : (
+              <label for="mail" className="ap-label">
+                Email
+              </label>
+            )}
+            <label for="password" className="ap-label">
+              Password
+            </label>
+          </div>
+          <div className="ap-input_container">
+            {email ? null : (
+              <input
+                type="email"
+                id="mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="ap-input_form"
+              />
+            )}
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="ap-input_form"
+            />
+          </div>
+          <button type="submit" className="ap-submit_form">
+            Login <FaArrowRightLong className="ap-arrow_icon" />
+          </button>
         </form>
+        <div className="ap-already_registered">
+          <button
+            onClick={() => {
+              setAlreadyRegistered(false);
+              setCanBeRedirected(!canBeRedirected);
+            }}
+            className="ap-button_log_in"
+          >
+            Click here to register
+          </button>
+        </div>
       </div>
     );
   } else {
     return (
-      <div>
-        Welcome
-        <form onSubmit={handleRegister}>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="Full Name"
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <button type="submit">Register</button>
+      <>
+        <div className="ap-main_content">
+          <div className="ap-welcome">
+            <div className="ap-icon_container">
+              <div class="ap-icon"></div>
+            </div>
+            <div className="ap-text_container">
+              <div className="ap-welcome_title">Welcome</div>
+              <div className="ap-info_text">
+                Get started by creating an account
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleRegister} className="ap-form">
+          <div className="ap-labels">
+            <label for="full_name" className="ap-label">
+              Full Name
+            </label>
+            <label for="mail" className="ap-label">
+              Email
+            </label>
+            <label for="password" className="ap-label">
+              Password
+            </label>
+            <label for="confirmPass" className="ap-label">
+              Confirm Password
+            </label>
+          </div>
+          <div className="ap-input_container">
+            <input
+              type="text"
+              id="full_name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Full Name"
+              className="ap-input_form"
+            />
+            <input
+              type="email"
+              id="mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="ap-input_form"
+            />
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="ap-input_form"
+            />
+            <input
+              type="password"
+              id="confirmPass"
+              value={confirmedPassword}
+              onChange={(e) => setConfirmedPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className="ap-input_form"
+            />
+          </div>
+          <button type="submit" className="ap-submit_form">
+            Register <FaArrowRightLong className="ap-arrow_icon" />
+          </button>
         </form>
-        <button
-          onClick={() => {
-            setAlreadyRegistered(true);
-          }}
-        >
-          Already registered ?
-        </button>
-      </div>
+
+        <div className="ap-already_registered">
+          <button
+            onClick={() => {
+              setAlreadyRegistered(true);
+              setCanBeRedirected(!canBeRedirected);
+            }}
+            className="ap-button_log_in"
+          >
+            Click here to log in
+          </button>
+        </div>
+      </>
     );
   }
 };
