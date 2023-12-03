@@ -1,5 +1,5 @@
 import "./ProjectPage.scss";
-import TasksPage from "./TasksPage/TasksPage";
+import TasksPage from "../TasksPage/TasksPage";
 import { IoBookmark } from "react-icons/io5";
 import { IoBookmarkOutline } from "react-icons/io5";
 
