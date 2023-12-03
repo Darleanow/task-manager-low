@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
+import { login } from "../Utils/Routing/store";
+
 import "./AuthenPage.scss";
 
 const AuthentPage = () => {
@@ -15,6 +18,7 @@ const AuthentPage = () => {
   const [userData, setUserData] = useState(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("email");
@@ -48,6 +52,7 @@ const AuthentPage = () => {
       }),
     });
     if (response.ok) {
+      dispatch(login());
       handleLogin(e);
       setAlreadyRegistered(true);
     } else {
@@ -72,6 +77,7 @@ const AuthentPage = () => {
       localStorage.setItem("email", email);
       localStorage.setItem("fullName", fullName);
       setIsLogged(true);
+      dispatch(login());
       navigate("/projects");
     } else {
       // Handle errors
