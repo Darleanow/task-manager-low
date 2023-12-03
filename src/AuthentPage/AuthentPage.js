@@ -78,14 +78,6 @@ const AuthentPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiry");
-    setIsLogged(false);
-    window.location.reload();
-    navigate("/login");
-  };
-
   const checkTokenValidity = () => {
     const tokenExpiry = localStorage.getItem("tokenExpiry");
     return tokenExpiry && Date.now() <= parseInt(tokenExpiry);
