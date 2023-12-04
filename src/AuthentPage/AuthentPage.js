@@ -40,7 +40,7 @@ const AuthentPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3333/register", {
+    const response = await fetch("http://localhost:3333/users/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const AuthentPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3333/login", {
+    const response = await fetch("http://localhost:3333/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const AuthentPage = () => {
   const fetchUserData = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:3333/user", {
+      const response = await fetch("http://localhost:3333/users/get_user", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
