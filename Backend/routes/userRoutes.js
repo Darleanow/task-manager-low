@@ -1,5 +1,5 @@
 const express = require("express");
-const userModel = require("../models/userModel");
+const userModel = require("../models/userModels");
 const authenticateToken = require("../middleware/authenticateToken");
 const router = express.Router();
 
@@ -32,7 +32,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Get user endpoint
-router.get("/user", authenticateToken, async (req, res) => {
+router.get("/get_user", authenticateToken, async (req, res) => {
     try {
         const userData = await userModel.getUserById(req.user.user_id);
         if (userData) {
