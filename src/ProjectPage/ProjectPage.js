@@ -5,40 +5,26 @@ import { IoBookmarkOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
 import "./ProjectPage.scss";
+import { useEffect } from "react";
 
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
-const projects = [
-  {
-    name: "Project 1",
-    description:
-      "Here’s a sample description that gets cut if it’s too long, but it needs to be really long",
-    issue_count: 40,
-    isFav: true,
-  },
-
-  {
-    name: "Bootstrap",
-    description:
-      "Bootstrap is a project that brings the css wrapper already huge, to another leve...",
-    issue_count: 0,
-    isFav: false,
-  },
-
-  {
-    name: "Bootstrap 2",
-    description:
-      "Bootstrap is a project that brings the css wrapper already huge, to another leve...",
-    issue_count: 0,
-    isFav: false,
-  },
-];
-
 const ProjectPage = () => {
-  const hasProjects = true;
+  const hasProjects = false;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const getUserProjects =({userId}) => {
+    return fetch(`projects/user_projects/${userId}`)
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+  }
+
+  // useEffect(() => {
+  //   getUserProjects();
+  // },[]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -88,7 +74,7 @@ const ProjectPage = () => {
       <div className="a-main_content">
         {hasProjects ? (
           <div className="a-project_list">
-            {projects.map((project) => (
+            {/* {projects.map((project) => (
               <div key={project.id}>
                 <div className="a-project_child">
                   <div className="a-placeholder_projectIcon">
@@ -113,7 +99,7 @@ const ProjectPage = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
         ) : (
           <div className="a-empty_projects">
