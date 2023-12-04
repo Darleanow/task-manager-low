@@ -65,3 +65,12 @@ CREATE TABLE IF NOT EXISTS Favorites (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
 );
+
+-- Table des projets des utilisateurs qui ne sont pas favoris
+CREATE TABLE IF NOT EXISTS UserProjects (
+    user_id INT,
+    project_id INT,
+    PRIMARY KEY (user_id, project_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
+);
