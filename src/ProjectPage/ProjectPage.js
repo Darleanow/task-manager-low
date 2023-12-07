@@ -4,8 +4,10 @@ import { IoBookmark } from "react-icons/io5";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
+import { useEffect, useState } from "react";
+import Modal from "react-modal";
+
 import "./ProjectPage.scss";
-import { useEffect } from "react";
 
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
@@ -15,12 +17,48 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getUserProjects =({userId}) => {
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const [users, setUsers] = useState([]);
+
+  async function fetchUsers() {
+    const response = await fetch("http://localhost:3333/users/get_users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: "" }),
+    });
+
+    if (response.ok) {
+      const data = response.json();
+      const transformedUsers = data.map((user) => ({
+        username: user.user_name,
+        role: user.user_role,
+        photo: URL.createObjectURL(user.user_picture),
+      }));
+      setUsers(transformedUsers);
+    }
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const getUserProjects = ({ userId }) => {
     return fetch(`projects/user_projects/${userId}`)
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error("Error:", error));
-  }
+  };
+
+  useEffect(() => {
+    Modal.setAppElement("#root");
+  }, []);
 
   // useEffect(() => {
   //   getUserProjects();
@@ -35,9 +73,9 @@ const ProjectPage = () => {
   };
 
   return (
-    <div className="a-main_window">
-      <div className="a-main_project_bar">
-        <div className="a-logo">
+    <div className="pp-main_window">
+      <div className="pp-main_project_bar">
+        <div className="pp-logo">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="49"
@@ -48,43 +86,81 @@ const ProjectPage = () => {
             <path d="M24.5 0L48.3157 41.25H0.684301L24.5 0Z" fill="#D9D9D9" />
           </svg>
         </div>
-        <div className="a-title">Projects</div>
+        <div className="pp-title">Projects</div>
         <button onClick={handleLogout}>Log out</button>
-        <div className="a-profile"></div>
+        <div className="pp-profile"></div>
       </div>
-      <div className="a-second_bar">
-        <div className="a-dropdown">
+      <div className="pp-second_bar">
+        <div className="pp-dropdown">
           <select name="visibility_filter" id="visibility_filter">
-            <option value="all">All</option>
+            <option value="ppll">All</option>
           </select>
         </div>
 
-        <div className="a-search_input">
+        <div className="pp-search_input">
           <input
             type="text"
-            className="a-input_content"
+            className="pp-input_content"
             placeholder="Search or filter..."
           />
         </div>
 
-        <div className="a-new_project_button">
-          <button className="a-button">New Project</button>
+        <div className="pp-new_project_button">
+          <button className="pp-button" onClick={openModal}>
+            New Project
+          </button>
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            contentLabel="Create a Project" // I don't know why we do need this
+            className={"pp-modal"}
+            overlayClassName={"pp-modal_overlay"}
+          >
+            <form className="pp-add_project_form">
+              <input
+                type="text"
+                placeholder="ProjectName"
+                className="pp-project_name"
+                id="project_title"
+                spellCheck="false"
+              />
+              <hr className="pp-line_form" />
+              <div className="pp-content_form">
+                <label for="project_description" className="pp-label_desc">
+                  Description
+                </label>
+                <textarea
+                  type="text"
+                  placeholder="Enter your description..."
+                  className="pp-project_description"
+                  id="project_description"
+                  spellCheck="false"
+                />
+                <fieldset>
+                  <legend>
+                    <button type="button">Add members</button>
+                  </legend>
+                </fieldset>
+              </div>
+            </form>
+            <button onClick={closeModal}>close</button>
+          </Modal>
         </div>
       </div>
-      <div className="a-main_content">
+      <div className="pp-main_content">
         {hasProjects ? (
-          <div className="a-project_list">
+          <div className="pp-project_list">
             {/* {projects.map((project) => (
               <div key={project.id}>
-                <div className="a-project_child">
-                  <div className="a-placeholder_projectIcon">
-                    <p className="a-placeholder_text_icon">
+                <div className="pp-project_child">
+                  <div className="pp-placeholder_projectIcon">
+                    <p className="pp-placeholder_text_icon">
                       {project.name.at(0)}
                     </p>
                   </div>
-                  <div className="a-project_info">
-                    <div className="a-project_title_and_favs">
-                      <p className="a-project_title">{project.name}</p>
+                  <div className="pp-project_info">
+                    <div className="pp-project_title_and_favs">
+                      <p className="pp-project_title">{project.name}</p>
                       <button
                         onClick={() => {
                           project.isFav = !project.isFav;
@@ -93,7 +169,7 @@ const ProjectPage = () => {
                         {project.isFav ? <IoBookmark /> : <IoBookmarkOutline />}
                       </button>
                     </div>
-                    <p className="a-project_description">
+                    <p className="pp-project_description">
                       {project.description}
                     </p>
                   </div>
@@ -102,11 +178,11 @@ const ProjectPage = () => {
             ))} */}
           </div>
         ) : (
-          <div className="a-empty_projects">
-            <div className="a-svg">
+          <div className="pp-empty_projects">
+            <div className="pp-svg">
               <img src={noProjects} alt="Empty Projects" />
             </div>
-            <div className="a-empty_text">
+            <div className="pp-empty_text">
               There are no projects created yet
             </div>
           </div>
