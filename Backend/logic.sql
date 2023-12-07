@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS Projects (
 CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
+    user_role VARCHAR(255),
+    user_picture BLOB,
     email VARCHAR(255) NOT NULL UNIQUE, -- Assure que les e-mails sont uniques
     password VARCHAR(255) NOT NULL -- Devrait être stocké comme un hash, pas en clair
 );
