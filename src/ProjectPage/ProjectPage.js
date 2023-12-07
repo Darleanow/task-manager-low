@@ -5,6 +5,9 @@ import { IoBookmarkOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
 import { useEffect, useState } from "react";
+import { login } from "../Utils/Routing/store";
+import { jwtDecode } from "jwt-decode";
+import { checkTokenValidity } from "../Utils/BulkUtilsImport";
 import Modal from "react-modal";
 
 import "./ProjectPage.scss";
@@ -58,7 +61,12 @@ const ProjectPage = () => {
 
   useEffect(() => {
     Modal.setAppElement("#root");
-  }, []);
+    const token = localStorage.getItem("token");
+    if (token && checkTokenValidity()) {
+      const userDetails = jwtDecode(token);
+      dispatch(login(userDetails));
+    }
+  }, [dispatch]);
 
   // useEffect(() => {
   //   getUserProjects();
