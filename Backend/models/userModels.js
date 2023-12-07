@@ -16,21 +16,21 @@ async function registerUser(full_name, email, password) {
 }
 
 async function loginUser(email, password) {
-  const query = "SELECT * FROM Users WHERE email = ?";
+  const query = "SELECT user_id, full_name, user_role, user_picture, email FROM Users WHERE email = ?";
   return new Promise((resolve, reject) => {
     db.query(query, [email], async (err, results) => {
       if (err) reject(err);
       if (results.length > 0) {
-        const validPassword = await bcrypt.compare(
-          password,
-          results[0].password
-        );
+        const validPassword = await bcrypt.compare(password, results[0].password);
         if (validPassword) {
-          const token = jwt.sign(
-            { user_id: results[0].user_id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-          );
+          const user = { 
+            user_id: results[0].user_id, 
+            full_name: results[0].full_name, 
+            user_role: results[0].user_role, 
+            user_picture: results[0].user_picture, 
+            email: results[0].email 
+          };
+          const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "24h" });
           resolve(token);
         } else {
           resolve(null);
