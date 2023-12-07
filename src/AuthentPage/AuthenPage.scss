@@ -13,6 +13,14 @@ body {
   background-color: $background-color;
 }
 
+.ap-loading {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
 .ap-main_content {
   display: flex;
   flex-direction: column;
