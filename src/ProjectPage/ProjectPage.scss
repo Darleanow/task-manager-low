@@ -93,6 +93,14 @@
       transition: 0.2s ease-in;
     }
 
+    .pp-notification_circle {
+      color:red;
+      font-size: 8px;
+      position: absolute;
+      margin-left: 15px;
+      margin-top: 1px;
+    }
+
     .pp-notification-dropdown {
       position: absolute;
       display: flex;
@@ -121,7 +129,6 @@
           cursor: pointer;
           border-radius: 8px;
           background-color: rgba(112, 112, 112, 0.308);
-        
         }
       }
 
@@ -132,6 +139,13 @@
       }
       .pp-notification_item {
         padding: 15px 10px;
+        display: flex;
+        align-items: center;
+        gap: 0.4vw;
+      }
+
+      .pp-notification_status {
+        color: rgba(77, 197, 77, 0.74);
       }
 
       .pp-notification_item:hover {

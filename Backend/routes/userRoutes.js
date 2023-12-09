@@ -78,7 +78,10 @@ router.post("/get_notifications", authenticateToken, async (req, res) => {
 router.post("/read_notification", authenticateToken, async (req, res) => {
   const { user_id, notification_id } = req.body;
   try {
-    const response = await userModel.setNotificationRead(user_id, notification_id);
+    const response = await userModel.setNotificationRead(
+      user_id,
+      notification_id
+    );
     if (response) {
       res.status(200).json(response);
     } else {
@@ -102,7 +105,5 @@ router.post("/read_all_notifications", authenticateToken, async (req, res) => {
     res.status(500).send("Error fetching notifications.");
   }
 });
-
-
 
 module.exports = router;

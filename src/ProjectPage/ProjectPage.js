@@ -1,7 +1,4 @@
-import TasksPage from "../TasksPage/TasksPage";
 import { useNavigate } from "react-router-dom";
-import { IoBookmark } from "react-icons/io5";
-import { IoBookmarkOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
 import { useEffect, useState } from "react";
@@ -223,11 +220,19 @@ const ProjectPage = () => {
       .catch((error) => console.error("Error:", error));
   };
 
+  //Polling for notifications
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchNotification();
+    }, 10000); // Asks every 10 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     Modal.setAppElement("#root");
 
     fetchUsers();
-    fetchNotification();
 
     const token = localStorage.getItem("token");
     if (token && checkTokenValidity()) {
@@ -266,15 +271,25 @@ const ProjectPage = () => {
         <div className="pp-right_section">
           <div className="pp-notifications_container">
             {dropdownOpen ? (
-              <FaBell
-                onClick={toggleDropdown}
-                className="pp-notifications_icon"
-              />
+              <>
+                <FaBell
+                  onClick={toggleDropdown}
+                  className="pp-notifications_icon"
+                />
+                {notifications.some((notification) => !notification.is_read) ? (
+                  <FaCircle className="pp-notification_circle" />
+                ) : null}
+              </>
             ) : (
-              <FaRegBell
-                onClick={toggleDropdown}
-                className="pp-notifications_icon"
-              />
+              <>
+                <FaRegBell
+                  onClick={toggleDropdown}
+                  className="pp-notifications_icon"
+                />
+                {notifications.some((notification) => !notification.is_read) ? (
+                  <FaCircle className="pp-notification_circle" />
+                ) : null}
+              </>
             )}
 
             {dropdownOpen && (
@@ -299,7 +314,11 @@ const ProjectPage = () => {
                         readNotification(notification.notification_id);
                       }}
                     >
-                      {notification.is_read ? <FaRegCircle /> : <FaCircle />}
+                      {notification.is_read ? (
+                        <FaRegCircle />
+                      ) : (
+                        <FaCircle className="pp-notification_status" />
+                      )}
                       {notification.notification_text}
                     </div>
                   </>
