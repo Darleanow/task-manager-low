@@ -37,12 +37,21 @@ const AuthentPage = () => {
     }
 
     const token = localStorage.getItem("token");
-    if (token && checkTokenValidity()) {
-      const userDetails = jwtDecode(token);
-      dispatch(login(userDetails));
-      setTimeout(() => {
-        navigate("/projects");
-      }, delay);
+    if (token) {
+      if (checkTokenValidity()) {
+        const userDetails = jwtDecode(token);
+        dispatch(login(userDetails));
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/projects");
+        }, delay);
+      } else {
+        // Token is invalid
+        setIsLoading(false);
+      }
+    } else {
+      // No token found
+      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
