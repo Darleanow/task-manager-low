@@ -9,8 +9,21 @@ import { login } from "../Utils/Routing/store";
 import { jwtDecode } from "jwt-decode";
 import { checkTokenValidity } from "../Utils/BulkUtilsImport";
 import Modal from "react-modal";
-
+import { MinidenticonImg } from "../Utils/BulkUtilsImport";
+import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
+import TagsInput from "react-tagsinput";
+import { FaBell, FaRegBell, FaCircle, FaRegCircle } from "react-icons/fa6";
+import { IoIosAdd } from "react-icons/io";
+import { MdOutlineMarkChatRead } from "react-icons/md";
 import "./ProjectPage.scss";
+
+const KeyCodes = {
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
@@ -20,36 +33,187 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [isOpenCreateProject, setIsOpenCreateProject] = useState(false);
+  const [isOpenAddUsers, setIsOpenAddUsers] = useState(false);
 
-  const [users, setUsers] = useState([]);
+  const [fetchedUsers, setFetchedUsers] = useState([]);
+  const [projectUsers, setProjectUsers] = useState([]);
 
-  async function fetchUsers() {
-    const response = await fetch("http://localhost:3333/users/get_users", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: "" }),
-    });
+  const [notifications, setNotifications] = useState([]);
 
-    if (response.ok) {
-      const data = response.json();
-      const transformedUsers = data.map((user) => ({
-        username: user.user_name,
-        role: user.user_role,
-        photo: URL.createObjectURL(user.user_picture),
-      }));
-      setUsers(transformedUsers);
+  const userId = useSelector((state) => state.auth.user.user_id);
+
+  const [tags, setTags] = useState([]);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+  // This function will be called when a new tag is added
+  const handleAddition = (newTags) => {
+    setTags(newTags);
+  };
+
+  // This function will be called when a tag is removed
+  const handleDelete = (indexToRemove) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+
+  async function fetchNotification() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/users/get_notifications",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+      if (response.ok) {
+        const notifications = await response.json();
+        const fetchedNotifications = notifications.map((notification) => ({
+          notification_id: notification.notification_id,
+          notification_text: notification.notification_text,
+          is_read: notification.is_read,
+          date: notification.creation_date,
+        }));
+        setNotifications(fetchedNotifications);
+        console.log(
+          "Notifications" + JSON.stringify(fetchedNotifications, null, 2)
+        );
+      } else {
+        console.error("Failed to fetch notifications");
+      }
+    } catch (error) {
+      console.log("Error fetching notifications: " + error);
     }
   }
 
-  function openModal() {
-    setIsOpen(true);
+  async function readNotification(notification_id) {
+    const updatedNotifications = notifications.map((notification) => {
+      if (notification.notification_id === notification_id) {
+        return { ...notification, is_read: true };
+      }
+      return notification;
+    });
+
+    setNotifications(updatedNotifications);
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/users/read_notification",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            notification_id: notification_id,
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("GJ");
+      } else {
+        // Handle response errors
+        console.error("Failed to read (u gotta be kidding)");
+      }
+    } catch (error) {
+      console.log("Wtf have u done ?");
+    }
   }
 
-  function closeModal() {
-    setIsOpen(false);
+  async function readAllNotifications() {
+    setNotifications(
+      notifications.map((notification) => ({ ...notification, is_read: true }))
+    );
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/users/read_all_notifications",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+      if (response.ok) {
+        console.log("GJ");
+      } else {
+        // Handle response errors
+        console.error("Failed to read all (u gotta be kiddingx2)");
+      }
+    } catch (error) {
+      console.log("Wtf have u done ?");
+    }
+  }
+
+  async function fetchUsers() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/users/get_all_users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const transformedUsers = data.map((user) => ({
+          username: user.full_name,
+          role: user.user_role || "User",
+          photo:
+            user.user_picture !== null ? (
+              URL.createObjectURL(user.user_picture)
+            ) : (
+              <MinidenticonImg
+                username={user.full_name}
+                saturation="90"
+                width="60"
+                height="60"
+              />
+            ),
+        }));
+        console.log("users" + JSON.stringify(transformedUsers, null, 2));
+        setFetchedUsers(transformedUsers);
+      } else {
+        // Handle response errors
+        console.error("Failed to fetch users");
+      }
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  }
+
+  function createProject() {
+    setIsOpenCreateProject(true);
+  }
+
+  function closeProject() {
+    setIsOpenCreateProject(false);
+  }
+
+  function addUsers() {
+    setIsOpenAddUsers(true);
+  }
+
+  function closeAddUsers() {
+    setIsOpenAddUsers(false);
   }
 
   const getUserProjects = ({ userId }) => {
@@ -61,6 +225,10 @@ const ProjectPage = () => {
 
   useEffect(() => {
     Modal.setAppElement("#root");
+
+    fetchUsers();
+    fetchNotification();
+
     const token = localStorage.getItem("token");
     if (token && checkTokenValidity()) {
       const userDetails = jwtDecode(token);
@@ -95,8 +263,53 @@ const ProjectPage = () => {
           </svg>
         </div>
         <div className="pp-title">Projects</div>
-        <button onClick={handleLogout}>Log out</button>
-        <div className="pp-profile"></div>
+        <div className="pp-right_section">
+          <div className="pp-notifications_container">
+            {dropdownOpen ? (
+              <FaBell
+                onClick={toggleDropdown}
+                className="pp-notifications_icon"
+              />
+            ) : (
+              <FaRegBell
+                onClick={toggleDropdown}
+                className="pp-notifications_icon"
+              />
+            )}
+
+            {dropdownOpen && (
+              <div className="pp-notification-dropdown">
+                <div className="pp-notifications_title">
+                  Notifications
+                  <MdOutlineMarkChatRead
+                    className="pp-mark_read"
+                    onClick={() => {
+                      readAllNotifications();
+                    }}
+                  />
+                </div>
+                <hr className="pp-separator_notifications" />
+                {notifications.map((notification, index) => (
+                  <>
+                    <div
+                      key={index}
+                      className="pp-notification_item"
+                      onClick={() => {
+                        notification.is_read = true;
+                        readNotification(notification.notification_id);
+                      }}
+                    >
+                      {notification.is_read ? <FaRegCircle /> : <FaCircle />}
+                      {notification.notification_text}
+                    </div>
+                  </>
+                ))}
+              </div>
+            )}
+          </div>
+          <button onClick={handleLogout}>Log out</button>
+          <div className="pp-profile"></div>
+        </div>
       </div>
       <div className="pp-second_bar">
         <div className="pp-dropdown">
@@ -114,13 +327,13 @@ const ProjectPage = () => {
         </div>
 
         <div className="pp-new_project_button">
-          <button className="pp-button" onClick={openModal}>
+          <button className="pp-button" onClick={createProject}>
             New Project
           </button>
           <Modal
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            contentLabel="Create a Project" // I don't know why we do need this
+            isOpen={isOpenCreateProject}
+            onRequestClose={closeProject}
+            contentLabel="Create a Project"
             className={"pp-modal"}
             overlayClassName={"pp-modal_overlay"}
           >
@@ -144,14 +357,100 @@ const ProjectPage = () => {
                   id="project_description"
                   spellCheck="false"
                 />
-                <fieldset>
+                <fieldset className="pp-fieldset_border">
                   <legend>
-                    <button type="button">Add members</button>
+                    <button
+                      type="button"
+                      className="pp-add_members_button"
+                      onClick={addUsers}
+                    >
+                      Add members
+                    </button>
+                    <Modal
+                      isOpen={isOpenAddUsers}
+                      onRequestClose={closeAddUsers}
+                      contentLabel="Add users"
+                      className={"pp-modal_add_users"}
+                      overlayClassName={"pp-modal_overlay_add_users"}
+                    >
+                      <div className="pp-modal_users_layout">
+                        <div className="pp-modal_users_title">
+                          <div className="pp-modal_title_text">
+                            Add project members
+                          </div>
+                          <div
+                            className="pp-modal_users_icon"
+                            onClick={closeAddUsers}
+                          >
+                            <IoMdClose className="pp-modal_users_icon" />
+                          </div>
+                        </div>
+                        <hr className="pp-user_layout_line" />
+                        <div className="pp-modal_users_add_email_container">
+                          <div className="pp-modal_users_add_email">
+                            Member email
+                          </div>
+                          <div className="pp-add_user_email">
+                            <TagsInput
+                              value={tags}
+                              onChange={handleAddition}
+                              onlyUnique
+                              inputProps={{ placeholder: "Add emails" }}
+                            />
+                            <button className="pp-send_email_invites">
+                              Send invites
+                            </button>
+                          </div>
+                        </div>
+                        <div className="pp-modal_users_add_email">
+                          Existing members
+                        </div>
+                        <div>
+                          {fetchedUsers ? (
+                            fetchedUsers.map((user) => (
+                              <div className="pp-user_fetched">
+                                <div className="pp-user_icon">{user.photo}</div>
+                                <div className="pp-user_info">
+                                  <div className="pp-user_name_modal">
+                                    {user.username}
+                                  </div>
+                                  <div className="pp-user_role_modal">
+                                    {user.role}
+                                  </div>
+                                </div>
+                                <IoIosAdd className="pp-add_icon" />
+                              </div>
+                            ))
+                          ) : (
+                            <div className="pp-only_user">
+                              You're the only user right now !
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </Modal>
                   </legend>
+                  {projectUsers.length > 0 ? (
+                    <>
+                      {projectUsers.slice(0, 3).map((user, index) => (
+                        <div className="pp-user_container" key={index}>
+                          <div className="pp-user_picture">{user.photo}</div>
+                          <div className="pp-user_name">{user.username}</div>
+                        </div>
+                      ))}
+                      {projectUsers.length > 3 && (
+                        <div className="pp-more_users">
+                          et {projectUsers.length - 3} de plus...
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="pp-no_added_users">Add a user!</div>
+                  )}
                 </fieldset>
               </div>
             </form>
-            <button onClick={closeModal}>close</button>
+            <button onClick={closeProject}>close</button>
           </Modal>
         </div>
       </div>
@@ -188,7 +487,7 @@ const ProjectPage = () => {
         ) : (
           <div className="pp-empty_projects">
             <div className="pp-svg">
-              <img src={noProjects} alt="Empty Projects" />
+              <img src={noProjects} alt="Empty Projects" draggable="false" />
             </div>
             <div className="pp-empty_text">
               There are no projects created yet
