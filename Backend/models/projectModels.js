@@ -1,16 +1,5 @@
 const db = require("../config/dbConfig");
 
-async function addProject(project_name, project_description) {
-  const query =
-    "INSERT INTO projects (project_name, project_description) VALUES (?, ?)";
-  return new Promise((resolve, reject) => {
-    db.query(query, [project_name, project_description], (err, result) => {
-      if (err) reject(err);
-      resolve("Données ajoutées avec succès");
-    });
-  });
-}
-
 async function getUserProjects(userID) {
   const query = `
         SELECT 
@@ -45,36 +34,105 @@ async function getUserProjects(userID) {
 
 async function setFavourite(user_id, project_id, is_favourite) {
   if (is_favourite) {
-      // Add to favorites
-      const insertQuery = `
+    // Add to favorites
+    const insertQuery = `
           INSERT INTO Favorites (user_id, project_id)
           VALUES (?, ?)
           ON DUPLICATE KEY UPDATE user_id = user_id;`;
 
-      return new Promise((resolve, reject) => {
-          db.query(insertQuery, [user_id, project_id], (err, result) => {
-              if (err) reject(err);
-              resolve("Projet ajouté aux favoris");
-          });
+    return new Promise((resolve, reject) => {
+      db.query(insertQuery, [user_id, project_id], (err, result) => {
+        if (err) reject(err);
+        resolve("Projet ajouté aux favoris");
       });
+    });
   } else {
-      // Remove from favorites
-      const deleteQuery = `
+    // Remove from favorites
+    const deleteQuery = `
           DELETE FROM Favorites
           WHERE user_id = ? AND project_id = ?;`;
 
-      return new Promise((resolve, reject) => {
-          db.query(deleteQuery, [user_id, project_id], (err, result) => {
-              if (err) reject(err);
-              resolve("Projet retiré des favoris");
-          });
+    return new Promise((resolve, reject) => {
+      db.query(deleteQuery, [user_id, project_id], (err, result) => {
+        if (err) reject(err);
+        resolve("Projet retiré des favoris");
       });
+    });
   }
 }
 
+async function addProject(projectName, projectDescription, userIds) {
+  return new Promise((resolve, reject) => {
+    // Begin transaction
+    db.beginTransaction((err) => {
+      if (err) reject(err);
+
+      // Query to insert into Projects table
+      const insertProjectQuery = `
+              INSERT INTO Projects (project_name, project_description) 
+              VALUES (?, ?);
+          `;
+
+      db.query(
+        insertProjectQuery,
+        [projectName, projectDescription],
+        (err, projectResult) => {
+          if (err) {
+            return db.rollback(() => {
+              reject(err);
+            });
+          }
+
+          const projectId = projectResult.insertId;
+
+          // Prepare promises for each userId insert
+          const userProjectPromises = userIds.map((userId) => {
+            return new Promise((resolve, reject) => {
+              const insertUserProjectQuery = `
+                          INSERT INTO UserProjects (user_id, project_id) 
+                          VALUES (?, ?);
+                      `;
+              db.query(
+                insertUserProjectQuery,
+                [userId, projectId],
+                (err, result) => {
+                  if (err) {
+                    reject(err); // Rejects individual promise
+                  } else {
+                    resolve(result); // Resolves individual promise
+                  }
+                }
+              );
+            });
+          });
+
+          // Execute all promises
+          Promise.all(userProjectPromises)
+            .then(() => {
+              // Commit the transaction
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    reject(err);
+                  });
+                }
+                resolve("Project added successfully with associated users.");
+              });
+            })
+            .catch((err) => {
+              // Rollback if any of the user insertions fail
+              db.rollback(() => {
+                reject(err);
+              });
+            });
+        }
+      );
+    });
+  });
+}
 
 module.exports = {
-  addProject,
   getUserProjects,
-  setFavourite
+  setFavourite,
+  addProject,
 };
