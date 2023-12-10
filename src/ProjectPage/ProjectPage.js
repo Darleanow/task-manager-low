@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { login } from "../Utils/Routing/store";
 import { jwtDecode } from "jwt-decode";
 import { checkTokenValidity } from "../Utils/BulkUtilsImport";
@@ -17,23 +17,12 @@ import {
   FaRegCircle,
   FaCheck,
 } from "react-icons/fa6";
-import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineMarkChatRead } from "react-icons/md";
 import "./ProjectPage.scss";
-
-const KeyCodes = {
-  comma: 188,
-  enter: 13,
-};
-
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
-
-const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
+import ProjectList from "./Components/ProjectList/ProjectList";
 
 const ProjectPage = () => {
-  const [hasProjects, setHasProjects] = useState(false);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -45,8 +34,6 @@ const ProjectPage = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projectUsers, setProjectUsers] = useState([]);
-
-  const [projects, setProjects] = useState([]);
 
   const [notifications, setNotifications] = useState([]);
 
@@ -60,11 +47,6 @@ const ProjectPage = () => {
   // This function will be called when a new tag is added
   const handleAddition = (newTags) => {
     setTags(newTags);
-  };
-
-  // This function will be called when a tag is removed
-  const handleDelete = (indexToRemove) => {
-    setTags(tags.filter((_, index) => index !== indexToRemove));
   };
 
   async function fetchNotification() {
@@ -241,50 +223,18 @@ const ProjectPage = () => {
 
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(
-        "http://localhost:3333/projects/add_project",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            project_name: name,
-            project_description: description,
-            user_ids: userIds,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        getUserProjects();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function getUserProjects() {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `http://localhost:3333/projects/user_projects/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const projs = await response.json();
-        setProjects(projs); // This will trigger a re-render
-
-        setHasProjects(projs.length > 0);
-      }
+      await fetch("http://localhost:3333/projects/add_project", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          project_name: name,
+          project_description: description,
+          user_ids: userIds,
+        }),
+      });
     } catch (err) {
       console.log(err);
     }
@@ -297,14 +247,13 @@ const ProjectPage = () => {
     }, 10000); // Asks every 10 seconds
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     Modal.setAppElement("#root");
 
     fetchNotification();
-
-    getUserProjects();
 
     fetchUsers();
 
@@ -313,11 +262,8 @@ const ProjectPage = () => {
       const userDetails = jwtDecode(token);
       dispatch(login(userDetails));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   getUserProjects();
-  // },[]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -613,51 +559,7 @@ const ProjectPage = () => {
           </Modal>
         </div>
       </div>
-      <div className="pp-main_content">
-        {hasProjects ? (
-          <div className="pp-project_list">
-            {projects.map((project) => (
-              <div key={project.id}>
-                <div className="pp-project_child">
-                  <div className="pp-placeholder_projectIcon">
-                    <p className="pp-placeholder_text_icon">
-                      {project.project_name.at(0)}
-                    </p>
-                  </div>
-                  <div className="pp-project_info">
-                    <div className="pp-project_title_and_favs">
-                      <p className="pp-project_title">{project.project_name}</p>
-                      <button
-                        onClick={() => {
-                          project.isFav = !project.isFav;
-                        }}
-                      >
-                        {project.status === "Favori" ? (
-                          <IoBookmark />
-                        ) : (
-                          <IoBookmarkOutline />
-                        )}
-                      </button>
-                    </div>
-                    <p className="pp-project_description">
-                      {project.project_description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="pp-empty_projects">
-            <div className="pp-svg">
-              <img src={noProjects} alt="Empty Projects" draggable="false" />
-            </div>
-            <div className="pp-empty_text">
-              There are no projects created yet
-            </div>
-          </div>
-        )}
-      </div>
+      <ProjectList user_id_prop={userId} />
     </div>
   );
 };
