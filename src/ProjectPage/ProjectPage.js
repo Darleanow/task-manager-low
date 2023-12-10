@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../Utils/Routing/store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { login } from "../Utils/Routing/store";
 import { jwtDecode } from "jwt-decode";
 import { checkTokenValidity } from "../Utils/BulkUtilsImport";
@@ -10,7 +10,14 @@ import { MinidenticonImg } from "../Utils/BulkUtilsImport";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import TagsInput from "react-tagsinput";
-import { FaBell, FaRegBell, FaCircle, FaRegCircle } from "react-icons/fa6";
+import {
+  FaBell,
+  FaRegBell,
+  FaCircle,
+  FaRegCircle,
+  FaCheck,
+} from "react-icons/fa6";
+import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineMarkChatRead } from "react-icons/md";
 import "./ProjectPage.scss";
@@ -25,7 +32,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 const noProjects = process.env.PUBLIC_URL + "/images/NoProject.svg";
 
 const ProjectPage = () => {
-  const hasProjects = false;
+  const [hasProjects, setHasProjects] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -34,7 +41,12 @@ const ProjectPage = () => {
   const [isOpenAddUsers, setIsOpenAddUsers] = useState(false);
 
   const [fetchedUsers, setFetchedUsers] = useState([]);
+
+  const [projectName, setProjectName] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
   const [projectUsers, setProjectUsers] = useState([]);
+
+  const [projects, setProjects] = useState([]);
 
   const [notifications, setNotifications] = useState([]);
 
@@ -69,7 +81,7 @@ const ProjectPage = () => {
           body: JSON.stringify({ user_id: userId }),
         }
       );
-      if (response.ok) {
+      if (response.ok && response.status !== 201) {
         const notifications = await response.json();
         const fetchedNotifications = notifications.map((notification) => ({
           notification_id: notification.notification_id,
@@ -78,15 +90,24 @@ const ProjectPage = () => {
           date: notification.creation_date,
         }));
         setNotifications(fetchedNotifications);
-        console.log(
-          "Notifications" + JSON.stringify(fetchedNotifications, null, 2)
-        );
+      } else if (response.status === 201) {
+        setNotifications([]);
       } else {
-        console.error("Failed to fetch notifications");
+        console.error("Erreur lors de la récupération des notifications");
       }
     } catch (error) {
-      console.log("Error fetching notifications: " + error);
+      console.error("Erreur de réseau ou autre erreur", error);
     }
+  }
+
+  function setSelected(userId) {
+    const newUsers = fetchedUsers.map((oldUser) => {
+      if (oldUser.id === userId) {
+        return { ...oldUser, isAdded: !oldUser.isAdded };
+      }
+      return oldUser;
+    });
+    setFetchedUsers(newUsers);
   }
 
   async function readNotification(notification_id) {
@@ -172,6 +193,7 @@ const ProjectPage = () => {
       if (response.ok) {
         const data = await response.json();
         const transformedUsers = data.map((user) => ({
+          id: user.user_id,
           username: user.full_name,
           role: user.user_role || "User",
           photo:
@@ -185,8 +207,8 @@ const ProjectPage = () => {
                 height="60"
               />
             ),
+          isAdded: false,
         }));
-        console.log("users" + JSON.stringify(transformedUsers, null, 2));
         setFetchedUsers(transformedUsers);
       } else {
         // Handle response errors
@@ -213,12 +235,60 @@ const ProjectPage = () => {
     setIsOpenAddUsers(false);
   }
 
-  const getUserProjects = ({ userId }) => {
-    return fetch(`projects/user_projects/${userId}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error("Error:", error));
-  };
+  async function createNewProject(name, description, users) {
+    const userIds = users.map((user) => user.id);
+    userIds.push(userId);
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/projects/add_project",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            project_name: name,
+            project_description: description,
+            user_ids: userIds,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        getUserProjects();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function getUserProjects() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        `http://localhost:3333/projects/user_projects/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const projs = await response.json();
+        setProjects(projs); // This will trigger a re-render
+
+        setHasProjects(projs.length > 0);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   //Polling for notifications
   useEffect(() => {
@@ -231,6 +301,10 @@ const ProjectPage = () => {
 
   useEffect(() => {
     Modal.setAppElement("#root");
+
+    fetchNotification();
+
+    getUserProjects();
 
     fetchUsers();
 
@@ -304,25 +378,31 @@ const ProjectPage = () => {
                   />
                 </div>
                 <hr className="pp-separator_notifications" />
-                {notifications.map((notification, index) => (
-                  <>
-                    <div
-                      key={index}
-                      className="pp-notification_item"
-                      onClick={() => {
-                        notification.is_read = true;
-                        readNotification(notification.notification_id);
-                      }}
-                    >
-                      {notification.is_read ? (
-                        <FaRegCircle />
-                      ) : (
-                        <FaCircle className="pp-notification_status" />
-                      )}
-                      {notification.notification_text}
-                    </div>
-                  </>
-                ))}
+                {notifications.length > 0 ? (
+                  notifications.map((notification, index) => (
+                    <>
+                      <div
+                        key={index}
+                        className="pp-notification_item"
+                        onClick={() => {
+                          notification.is_read = true;
+                          readNotification(notification.notification_id);
+                        }}
+                      >
+                        {notification.is_read ? (
+                          <FaRegCircle className="pp-notification_status" />
+                        ) : (
+                          <FaCircle className="pp-notification_status_active" />
+                        )}
+                        {notification.notification_text}
+                      </div>
+                    </>
+                  ))
+                ) : (
+                  <div className="pp-align_clear">
+                    <p>All clear !</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -356,152 +436,216 @@ const ProjectPage = () => {
             className={"pp-modal"}
             overlayClassName={"pp-modal_overlay"}
           >
-            <form className="pp-add_project_form">
-              <input
-                type="text"
-                placeholder="ProjectName"
-                className="pp-project_name"
-                id="project_title"
-                spellCheck="false"
-              />
-              <hr className="pp-line_form" />
-              <div className="pp-content_form">
-                <label for="project_description" className="pp-label_desc">
-                  Description
-                </label>
-                <textarea
+            <div className="pp-project_content">
+              <form className="pp-add_project_form">
+                <input
                   type="text"
-                  placeholder="Enter your description..."
-                  className="pp-project_description"
-                  id="project_description"
+                  placeholder="Project Name"
+                  className="pp-project_name"
+                  id="project_title"
                   spellCheck="false"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
                 />
-                <fieldset className="pp-fieldset_border">
-                  <legend>
-                    <button
-                      type="button"
-                      className="pp-add_members_button"
-                      onClick={addUsers}
-                    >
-                      Add members
-                    </button>
-                    <Modal
-                      isOpen={isOpenAddUsers}
-                      onRequestClose={closeAddUsers}
-                      contentLabel="Add users"
-                      className={"pp-modal_add_users"}
-                      overlayClassName={"pp-modal_overlay_add_users"}
-                    >
-                      <div className="pp-modal_users_layout">
-                        <div className="pp-modal_users_title">
-                          <div className="pp-modal_title_text">
-                            Add project members
+                <hr className="pp-line_form" />
+                <div className="pp-content_form">
+                  <label for="project_description" className="pp-label_desc">
+                    Description
+                  </label>
+                  <textarea
+                    type="text"
+                    placeholder="Enter your description..."
+                    className="pp-project_description"
+                    id="project_description"
+                    spellCheck="false"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                  />
+                  <fieldset className="pp-fieldset_border">
+                    <legend>
+                      <button
+                        type="button"
+                        className="pp-add_members_button"
+                        onClick={addUsers}
+                      >
+                        Add members
+                      </button>
+                      <Modal
+                        isOpen={isOpenAddUsers}
+                        onRequestClose={closeAddUsers}
+                        contentLabel="Add users"
+                        className={"pp-modal_add_users"}
+                        overlayClassName={"pp-modal_overlay_add_users"}
+                      >
+                        <div className="pp-modal_users_layout">
+                          <div className="pp-modal_users_title">
+                            <div className="pp-modal_title_text">
+                              Add project members
+                            </div>
+                            <div
+                              className="pp-modal_users_icon"
+                              onClick={closeAddUsers}
+                            >
+                              <IoMdClose className="pp-modal_users_icon" />
+                            </div>
                           </div>
-                          <div
-                            className="pp-modal_users_icon"
-                            onClick={closeAddUsers}
-                          >
-                            <IoMdClose className="pp-modal_users_icon" />
+                          <hr className="pp-user_layout_line" />
+                          <div className="pp-modal_users_add_email_container">
+                            <div className="pp-modal_users_add_email">
+                              Member email
+                            </div>
+                            <div className="pp-add_user_email">
+                              <TagsInput
+                                value={tags}
+                                onChange={handleAddition}
+                                onlyUnique
+                                inputProps={{ placeholder: "Add emails" }}
+                              />
+                              <button className="pp-send_email_invites">
+                                Send invites
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <hr className="pp-user_layout_line" />
-                        <div className="pp-modal_users_add_email_container">
                           <div className="pp-modal_users_add_email">
-                            Member email
+                            Existing members
                           </div>
-                          <div className="pp-add_user_email">
-                            <TagsInput
-                              value={tags}
-                              onChange={handleAddition}
-                              onlyUnique
-                              inputProps={{ placeholder: "Add emails" }}
-                            />
-                            <button className="pp-send_email_invites">
-                              Send invites
+                          <div>
+                            <div className="pp-fetched_users_container">
+                              {fetchedUsers ? (
+                                fetchedUsers.map((user) => (
+                                  <div
+                                    className="pp-user_fetched"
+                                    onClick={() => {
+                                      setSelected(user.id);
+                                    }}
+                                  >
+                                    <div className="pp-user_icon">
+                                      {user.photo}
+                                    </div>
+                                    <div className="pp-user_info">
+                                      <div className="pp-user_name_modal">
+                                        {user.username}
+                                      </div>
+                                      <div className="pp-user_role_modal">
+                                        {user.role}
+                                      </div>
+                                    </div>
+                                    {user.isAdded ? (
+                                      <FaCheck className="pp-added_icon" />
+                                    ) : (
+                                      <IoIosAdd className="pp-add_icon" />
+                                    )}
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="pp-only_user">
+                                  You're the only user in the system right now !
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="pp-container_validate_users">
+                            <button
+                              type="button"
+                              onClick={closeAddUsers}
+                              className="pp-cancel_button"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              className="pp-add_users_validate"
+                              onClick={() => {
+                                closeAddUsers();
+                                setProjectUsers(
+                                  fetchedUsers.filter((user) => user.isAdded)
+                                );
+                              }}
+                            >
+                              Save
                             </button>
                           </div>
                         </div>
-                        <div className="pp-modal_users_add_email">
-                          Existing members
-                        </div>
-                        <div>
-                          {fetchedUsers ? (
-                            fetchedUsers.map((user) => (
-                              <div className="pp-user_fetched">
-                                <div className="pp-user_icon">{user.photo}</div>
-                                <div className="pp-user_info">
-                                  <div className="pp-user_name_modal">
-                                    {user.username}
-                                  </div>
-                                  <div className="pp-user_role_modal">
-                                    {user.role}
-                                  </div>
-                                </div>
-                                <IoIosAdd className="pp-add_icon" />
-                              </div>
-                            ))
-                          ) : (
-                            <div className="pp-only_user">
-                              You're the only user right now !
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Modal>
-                  </legend>
-                  {projectUsers.length > 0 ? (
-                    <>
-                      {projectUsers.slice(0, 3).map((user, index) => (
-                        <div className="pp-user_container" key={index}>
-                          <div className="pp-user_picture">{user.photo}</div>
-                          <div className="pp-user_name">{user.username}</div>
-                        </div>
-                      ))}
-                      {projectUsers.length > 3 && (
-                        <div className="pp-more_users">
-                          et {projectUsers.length - 3} de plus...
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="pp-no_added_users">Add a user!</div>
-                  )}
-                </fieldset>
+                      </Modal>
+                    </legend>
+                    {projectUsers.length > 0 ? (
+                      <>
+                        {projectUsers.slice(0, 3).map((user, index) => (
+                          <div className="pp-user_container" key={index}>
+                            <div className="pp-user_picture">{user.photo}</div>
+                            <div className="pp-user_name">{user.username}</div>
+                          </div>
+                        ))}
+                        {projectUsers.length > 3 && (
+                          <div className="pp-more_users">
+                            et {projectUsers.length - 3} de plus...
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="pp-no_added_users">Add a user!</div>
+                    )}
+                  </fieldset>
+                </div>
+              </form>
+              <div className="pp-save_project_create">
+                <button
+                  onClick={closeProject}
+                  className="pp-project_create_close"
+                >
+                  close
+                </button>
+                <button
+                  onClick={() => {
+                    closeProject();
+                    createNewProject(
+                      projectName,
+                      projectDescription,
+                      projectUsers
+                    );
+                  }}
+                  className="pp-project_create_save"
+                >
+                  Create project
+                </button>
               </div>
-            </form>
-            <button onClick={closeProject}>close</button>
+            </div>
           </Modal>
         </div>
       </div>
       <div className="pp-main_content">
         {hasProjects ? (
           <div className="pp-project_list">
-            {/* {projects.map((project) => (
+            {projects.map((project) => (
               <div key={project.id}>
                 <div className="pp-project_child">
                   <div className="pp-placeholder_projectIcon">
                     <p className="pp-placeholder_text_icon">
-                      {project.name.at(0)}
+                      {project.project_name.at(0)}
                     </p>
                   </div>
                   <div className="pp-project_info">
                     <div className="pp-project_title_and_favs">
-                      <p className="pp-project_title">{project.name}</p>
+                      <p className="pp-project_title">{project.project_name}</p>
                       <button
                         onClick={() => {
                           project.isFav = !project.isFav;
                         }}
                       >
-                        {project.isFav ? <IoBookmark /> : <IoBookmarkOutline />}
+                        {project.status === "Favori" ? (
+                          <IoBookmark />
+                        ) : (
+                          <IoBookmarkOutline />
+                        )}
                       </button>
                     </div>
                     <p className="pp-project_description">
-                      {project.description}
+                      {project.project_description}
                     </p>
                   </div>
                 </div>
               </div>
-            ))} */}
+            ))}
           </div>
         ) : (
           <div className="pp-empty_projects">
