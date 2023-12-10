@@ -3,3 +3,4 @@
 export * from "./UX/ColorAnalyzerUX";
 export * from "./UX/FormattingToolsUX";
 export * from "./Misc/HashTools";
+export * from "./Misc/ToastsTools";

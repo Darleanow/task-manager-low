@@ -6,6 +6,8 @@ $font-family: Inter;
 
 * {
   user-select: none;
+  -moz-user-focus: ignore;
+  outline:none;
 }
 
 html,
@@ -119,14 +121,36 @@ body {
       line-height: normal;
       transition: 0.2s ease-in;
     }
+ 
 
     .ap-input_form:hover {
       border: 2px solid #2b2b2b;
       background: #444444;
       transition: 0.2s ease-in;
+     
     }
-  }
+    .ap-input_form.valid {
+      border-color: rgb(8, 180, 37);
+    }
+    .ap-input_form.valid:focus {
+      border-color: rgb(8, 180, 37);
+    }
 
+    .ap-input_form.invalid {
+      border-color: rgb(129, 39, 39);
+    }
+    .ap-input_form.invalid:focus {
+      border-color: rgb(129, 39, 39);
+    }
+
+    .ap-input_form.not-matching{
+      border-color: rgb(212, 247, 15);
+    }
+    .ap-input_form.not-matching:focus {
+      border-color: rgb(212, 247, 15);
+    }
+
+  } 
   .ap-submit_form {
     display: flex;
     align-items: center;
