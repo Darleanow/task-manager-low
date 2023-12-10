@@ -68,7 +68,7 @@ router.post("/get_notifications", authenticateToken, async (req, res) => {
     if (notifications) {
       res.status(200).json(notifications);
     } else {
-      res.status(200).send("No notifications");
+      res.status(201).send("Nothing");
     }
   } catch (err) {
     res.status(500).send("Error fetching notifications.");
