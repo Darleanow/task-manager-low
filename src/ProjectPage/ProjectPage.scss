@@ -86,6 +86,7 @@
     .pp-notifications_icon {
       font-size: 26px;
       transition: 0.2s ease-in;
+      flex-shrink: 0;
     }
 
     .pp-notifications_icon:hover {
@@ -94,7 +95,7 @@
     }
 
     .pp-notification_circle {
-      color:red;
+      color: red;
       font-size: 8px;
       position: absolute;
       margin-left: 15px;
@@ -105,8 +106,8 @@
       position: absolute;
       display: flex;
       flex-direction: column;
-      width: 12vw;
-      margin-left: -6vw;
+      width: 22vw;
+      margin-left: -13vw;
       margin-top: 5vh;
       border: 1px solid rgb(66, 66, 66);
       border-radius: 8px;
@@ -137,14 +138,27 @@
         border: none;
         border-top: 1px solid rgb(61, 61, 61);
       }
+
+      .pp-align_clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .pp-notification_item {
         padding: 15px 10px;
         display: flex;
         align-items: center;
         gap: 0.4vw;
+        font-size: 16px;
       }
 
-      .pp-notification_status {
+      .pp-notification_status,
+      .pp-notification_status_active {
+        flex-shrink: 0;
+        text-wrap: auto;
+      }
+      .pp-notification_status_active {
         color: rgba(77, 197, 77, 0.74);
       }
 
@@ -363,15 +377,6 @@
           font-weight: 400;
           line-height: normal;
         }
-
-        .pp-project_description {
-          color: #575757;
-          font-family: Inter;
-          font-size: 0.9375rem;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-        }
       }
     }
 
@@ -405,6 +410,12 @@
   right: 0;
   bottom: 0;
   background: rgba(27, 27, 27, 0.93);
+}
+
+.pp-project_content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .pp-add_project_form {
@@ -467,7 +478,7 @@
   padding-right: 10px;
   resize: none;
   border-radius: 1rem;
-  border: 2px solid #000;
+  border: 1px solid #646464;
   background: #1e1e1e;
   color: #545454;
   text-align: start;
@@ -544,6 +555,7 @@
   display: flex;
   flex-direction: column;
   margin: 3vh 2vw;
+  height: calc(100% - 3vh);
 
   .pp-modal_users_title {
     display: flex;
@@ -562,6 +574,56 @@
     .pp-modal_users_icon:hover {
       cursor: pointer;
       color: rgb(192, 36, 36);
+      transition: 0.2s ease-in;
+    }
+  }
+
+  .pp-container_validate_users {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2vh;
+
+    .pp-cancel_button {
+      padding: 5px 10px;
+      border-radius: 0.5rem;
+      border: 1px solid #3f3f3f;
+      background: #0a0a0a;
+      color: #4f4f4f;
+      font-family: Inter;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      margin-right: 2vw;
+      margin-left: -2vw;
+      transition: 0.2s ease-in;
+    }
+
+    .pp-cancel_button:hover {
+      cursor: pointer;
+      background: #4f4f4f;
+      color: #0a0a0a;
+      transition: 0.2s ease-in;
+    }
+
+    .pp-add_users_validate {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 18px;
+      border: 1px solid #565656;
+      background: #141414;
+      color: #c2c2c2;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .pp-add_users_validate:hover {
+      cursor: pointer;
+      background: #363636;
+      color: #141414;
       transition: 0.2s ease-in;
     }
   }
@@ -596,7 +658,8 @@
       font-family: Inter;
       font-size: 0.9375rem;
       font-weight: 600;
-      padding: 0 10px;
+      padding: 0 20px;
+      text-wrap: nowrap;
       transition: 0.2s ease-in;
     }
 
@@ -614,7 +677,7 @@
       padding-left: 10px;
       padding-top: 5px;
       width: 75%;
-      height: 4sssssssssssssssssssssss0px;
+      height: 40px;
       overflow-x: auto;
       white-space: nowrap;
       display: flex; /* Keep using flex to align tags inline */
@@ -679,7 +742,7 @@
   align-items: flex-start;
   transition: 0.2s ease-in;
   border-radius: 16px;
-  border: 1px solid transparent;
+  border: 1px solid rgb(32, 32, 32);
   height: 50%;
 }
 .pp-user_fetched > * {
@@ -687,8 +750,7 @@
 }
 
 .pp-user_fetched:hover {
-  border: 1px solid white;
-  background-color: rgb(65, 65, 65);
+  border: 1px solid rgba(255, 255, 255, 0.281);
   transition: 0.2s ease-in;
   cursor: pointer;
 }
@@ -715,7 +777,85 @@
   font-size: 56px;
   margin-left: auto;
   margin-right: 10px;
-  color: white;
+  color: rgb(153, 153, 153);
+}
+
+.pp-added_icon {
+  margin-top: 15px;
+  font-size: 42px;
+  margin-left: auto;
+  margin-right: 15px;
+  color: rgba(94, 138, 83, 0.589);
+}
+
+.pp-user_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 15px;
+  .pp-user_name {
+    margin-left: 1vw;
+    color: #c3c3c3;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}
+
+.pp-save_project_create {
+  display: flex;
+  margin-top: auto;
+  justify-content: center;
+  margin-bottom: 3vh;
+
+  .pp-project_create_close {
+    padding: 1.5vh 3.5vw;
+    border-radius: 1rem;
+    border: 2px solid #0e0e0e;
+    background: #262626;
+    color: #626262;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    transition: 0.2s ease-in;
+  }
+
+  .pp-project_create_close:hover {
+    background: #626262;
+    color: #262626;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+  }
+
+  .pp-project_create_save {
+    margin-left: 5vw;
+    padding: 1.5vh 3.5vw;
+    border-radius: 1rem;
+    border: 2px solid #848484;
+    background: #3a3a3a;
+    box-shadow: 0px 0px 24px 0px rgba(255, 255, 255, 0.25);
+    color: #fff;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    transition: 0.2s ease-in;
+  }
+
+  .pp-project_create_save:hover {
+    background: #3a3a3a;
+    box-shadow: 0px 0px 24px 0px rgba(170, 170, 170, 0.781);
+    color: #fff;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+  }
 }
 
 @keyframes border-glow {
