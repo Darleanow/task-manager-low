@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS Notifications (
     user_id INT,
     notification_text TEXT NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
+    metadatas TEXT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
