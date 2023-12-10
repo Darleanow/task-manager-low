@@ -64,7 +64,7 @@ async function getUserById(userId) {
 
 async function getAllusersButID(userId) {
   const query =
-    "SELECT full_name, email, user_role, user_picture FROM Users WHERE user_id != ?";
+    "SELECT user_id, full_name, email, user_role, user_picture FROM Users WHERE user_id != ?";
   return new Promise((resolve, reject) => {
     db.query(query, [userId], (err, results) => {
       if (err) reject(err);
@@ -124,6 +124,31 @@ async function setAllNotificationRead(userId) {
   });
 }
 
+async function sendNotifications(userIds, notification_text, metadatas) {
+  // Create an array of promises, one for each userId
+  const promises = userIds.slice(0, -1).map((userId) => {
+    const query =
+      "INSERT INTO Notifications (user_id, notification_text, metadatas) VALUES (?, ?, ?)";
+    return new Promise((resolve, reject) => {
+      db.query(query, [userId, notification_text, metadatas], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  });
+
+  // Use Promise.all to execute all queries concurrently
+  try {
+    const results = await Promise.all(promises);
+    return results; // This will be an array of results for each query
+  } catch (error) {
+    throw error; // Handle or throw the error as needed
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -131,5 +156,6 @@ module.exports = {
   getAllusersButID,
   getUserNotifications,
   setNotificationRead,
-  setAllNotificationRead
+  setAllNotificationRead,
+  sendNotifications,
 };
