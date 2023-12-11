@@ -10,17 +10,13 @@ import { MinidenticonImg } from "../Utils/BulkUtilsImport";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import TagsInput from "react-tagsinput";
-import {
-  FaBell,
-  FaRegBell,
-  FaCircle,
-  FaRegCircle,
-  FaCheck,
-} from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa6";
 import { IoIosAdd } from "react-icons/io";
-import { MdOutlineMarkChatRead } from "react-icons/md";
-import "./ProjectPage.scss";
+
+import Notifications from "./Components/Notifications/Notifications";
 import ProjectList from "./Components/ProjectList/ProjectList";
+
+import "./ProjectPage.scss";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -35,52 +31,14 @@ const ProjectPage = () => {
   const [projectDescription, setProjectDescription] = useState("");
   const [projectUsers, setProjectUsers] = useState([]);
 
-  const [notifications, setNotifications] = useState([]);
-
   const userId = useSelector((state) => state.auth.user.user_id);
 
   const [tags, setTags] = useState([]);
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   // This function will be called when a new tag is added
   const handleAddition = (newTags) => {
     setTags(newTags);
   };
-
-  async function fetchNotification() {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        "http://localhost:3333/users/get_notifications",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ user_id: userId }),
-        }
-      );
-      if (response.ok && response.status !== 201) {
-        const notifications = await response.json();
-        const fetchedNotifications = notifications.map((notification) => ({
-          notification_id: notification.notification_id,
-          notification_text: notification.notification_text,
-          is_read: notification.is_read,
-          date: notification.creation_date,
-        }));
-        setNotifications(fetchedNotifications);
-      } else if (response.status === 201) {
-        setNotifications([]);
-      } else {
-        console.error("Erreur lors de la récupération des notifications");
-      }
-    } catch (error) {
-      console.error("Erreur de réseau ou autre erreur", error);
-    }
-  }
 
   function setSelected(userId) {
     const newUsers = fetchedUsers.map((oldUser) => {
@@ -90,72 +48,6 @@ const ProjectPage = () => {
       return oldUser;
     });
     setFetchedUsers(newUsers);
-  }
-
-  async function readNotification(notification_id) {
-    const updatedNotifications = notifications.map((notification) => {
-      if (notification.notification_id === notification_id) {
-        return { ...notification, is_read: true };
-      }
-      return notification;
-    });
-
-    setNotifications(updatedNotifications);
-
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        "http://localhost:3333/users/read_notification",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            user_id: userId,
-            notification_id: notification_id,
-          }),
-        }
-      );
-      if (response.ok) {
-        console.log("GJ");
-      } else {
-        // Handle response errors
-        console.error("Failed to read (u gotta be kidding)");
-      }
-    } catch (error) {
-      console.log("Wtf have u done ?");
-    }
-  }
-
-  async function readAllNotifications() {
-    setNotifications(
-      notifications.map((notification) => ({ ...notification, is_read: true }))
-    );
-
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        "http://localhost:3333/users/read_all_notifications",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ user_id: userId }),
-        }
-      );
-      if (response.ok) {
-        console.log("GJ");
-      } else {
-        // Handle response errors
-        console.error("Failed to read all (u gotta be kiddingx2)");
-      }
-    } catch (error) {
-      console.log("Wtf have u done ?");
-    }
   }
 
   async function fetchUsers() {
@@ -240,20 +132,8 @@ const ProjectPage = () => {
     }
   }
 
-  //Polling for notifications
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchNotification();
-    }, 10000); // Asks every 10 seconds
-
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
     Modal.setAppElement("#root");
-
-    fetchNotification();
 
     fetchUsers();
 
@@ -289,69 +169,7 @@ const ProjectPage = () => {
         </div>
         <div className="pp-title">Projects</div>
         <div className="pp-right_section">
-          <div className="pp-notifications_container">
-            {dropdownOpen ? (
-              <>
-                <FaBell
-                  onClick={toggleDropdown}
-                  className="pp-notifications_icon"
-                />
-                {notifications.some((notification) => !notification.is_read) ? (
-                  <FaCircle className="pp-notification_circle" />
-                ) : null}
-              </>
-            ) : (
-              <>
-                <FaRegBell
-                  onClick={toggleDropdown}
-                  className="pp-notifications_icon"
-                />
-                {notifications.some((notification) => !notification.is_read) ? (
-                  <FaCircle className="pp-notification_circle" />
-                ) : null}
-              </>
-            )}
-
-            {dropdownOpen && (
-              <div className="pp-notification-dropdown">
-                <div className="pp-notifications_title">
-                  Notifications
-                  <MdOutlineMarkChatRead
-                    className="pp-mark_read"
-                    onClick={() => {
-                      readAllNotifications();
-                    }}
-                  />
-                </div>
-                <hr className="pp-separator_notifications" />
-                {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <>
-                      <div
-                        key={index}
-                        className="pp-notification_item"
-                        onClick={() => {
-                          notification.is_read = true;
-                          readNotification(notification.notification_id);
-                        }}
-                      >
-                        {notification.is_read ? (
-                          <FaRegCircle className="pp-notification_status" />
-                        ) : (
-                          <FaCircle className="pp-notification_status_active" />
-                        )}
-                        {notification.notification_text}
-                      </div>
-                    </>
-                  ))
-                ) : (
-                  <div className="pp-align_clear">
-                    <p>All clear !</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          <Notifications />
           <button onClick={handleLogout}>Log out</button>
           <div className="pp-profile"></div>
         </div>
