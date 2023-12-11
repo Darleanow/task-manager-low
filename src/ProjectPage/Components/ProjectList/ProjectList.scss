@@ -1,11 +1,11 @@
 // This shouldn't be here but fuck it !
-.pp-main_content {
+.pl-main_content {
   width: 100vw;
   overflow-x: hidden !important;
   display: flex;
   justify-content: center;
   // Style for the list of projects
-  .pp-project_list {
+  .pl-project_list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -13,7 +13,7 @@
     align-items: center;
 
     // Style for each project item
-    .pp-project_child {
+    .pl-project_child {
       box-sizing: border-box;
       display: flex;
       flex-direction: row;
@@ -25,7 +25,7 @@
       border: 2px solid transparent;
 
       // Style for the project icon
-      .pp-placeholder_projectIcon {
+      .pl-placeholder_projectIcon {
         border-radius: 0.25rem;
         background: #404040;
         width: 7vw;
@@ -41,7 +41,7 @@
         border: 2px solid transparent;
         position: relative;
 
-        .pp-placeholder_text_icon {
+        .pl-placeholder_text_icon {
           color: #fff;
           text-align: center;
           font-family: Inter;
@@ -52,7 +52,7 @@
         }
       }
 
-      .pp-placeholder_projectIcon::before {
+      .pl-placeholder_projectIcon::before {
         content: "";
         position: absolute;
         top: 0;
@@ -64,28 +64,28 @@
       }
 
       // Style for the project info section
-      .pp-project_info {
+      .pl-project_info {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         width: 100%;
 
         // Container for project title and favorite button
-        .pp-project_title_and_favs {
+        .pl-project_title_and_favs {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
           margin-left: 1vw;
 
           // Title and description common styles
-          .pp-project_title {
+          .pl-project_title {
             margin: 0;
             line-height: 1.2;
             text-overflow: ellipsis;
           }
 
           // Specific styles for the project title
-          .pp-project_title {
+          .pl-project_title {
             margin-top: 3vh;
             color: #fff;
             font-family: Inter;
@@ -96,12 +96,12 @@
           }
 
           // Button to toggle favorite status
-          .pp-project_button_favorite {
+          .pl-project_button_favorite {
             background-color: transparent;
             border: none;
 
             // Styles for the favorite icon
-            .pp-project_favorite {
+            .pl-project_favorite {
               color: #383838;
               font-size: 32px;
               margin-top: 1.5vh;
@@ -110,7 +110,7 @@
             }
 
             // Hover effects for the favorite icon
-            .pp-project_favorite:hover {
+            .pl-project_favorite:hover {
               color: #8d8d8d;
               cursor: pointer;
               transition: 0.2s ease-in;
@@ -119,7 +119,7 @@
         }
 
         // Styles for the project description
-        .pp-created_project_description {
+        .pl-created_project_description {
           display: flex;
           margin-top: 1vh;
           margin: 0.5vh 1vw;
@@ -134,21 +134,21 @@
         }
 
         // Bottom (line and issues)
-        .pp-bottom_layout {
+        .pl-bottom_layout {
           display: flex;
           margin-top: auto;
           justify-content: center;
           flex-direction: column;
 
           // Line styling
-          .pp-line_issues {
+          .pl-line_issues {
             width: 40%;
             margin-left: 5vw;
             background: #6a6a6a;
           }
 
           // Issues count styling
-          .pp-project_issues_total {
+          .pl-project_issues_total {
             margin-left: 9.5vw;
             color: #fff;
             font-family: Inter;
@@ -162,7 +162,7 @@
       &:hover {
         border-color: #505050;
 
-        .pp-placeholder_projectIcon {
+        .pl-placeholder_projectIcon {
           animation: border-glow 3s ease-in-out infinite;
           transition: 0.2s ease-in;
         }
@@ -171,7 +171,7 @@
   }
 
   // Style for when there are no projects
-  .pp-empty_projects {
+  .pl-empty_projects {
     display: flex;
     width: 100%;
     height: 100%;
@@ -180,14 +180,14 @@
     justify-content: center;
 
     // Styles of the icon if empty projects
-    .pp-svg {
+    .pl-svg {
       margin-top: 10vh;
       width: 15vw;
       height: 15vh;
     }
 
     // Styles for the info text below the icon
-    .pp-empty_text {
+    .pl-empty_text {
       width: 40%;
       margin-top: 10rem;
       color: #8d8d8d;

@@ -96,19 +96,19 @@ const ProjectList = () => {
   }, [getUserProjects]);
 
   return (
-    <div className="pp-main_content">
+    <div className="pl-main_content">
       {hasProjects ? (
-        <div className="pp-project_list">
+        <div className="pl-project_list">
           {projects.map((project) => (
-            <div key={project.project_id} className="pp-project_child">
-              <div className="pp-placeholder_projectIcon">
-                <p className="pp-placeholder_text_icon">
+            <div key={project.project_id} className="pl-project_child">
+              <div className="pl-placeholder_projectIcon">
+                <p className="pl-placeholder_text_icon">
                   {project.project_name.at(0)}
                 </p>
               </div>
-              <div className="pp-project_info">
-                <div className="pp-project_title_and_favs">
-                  <p className="pp-project_title">{project.project_name}</p>
+              <div className="pl-project_info">
+                <div className="pl-project_title_and_favs">
+                  <p className="pl-project_title">{project.project_name}</p>
                   <button
                     onClick={() =>
                       setProjectAsFavourite(
@@ -116,21 +116,21 @@ const ProjectList = () => {
                         project.status !== "Favori"
                       )
                     }
-                    className="pp-project_button_favorite"
+                    className="pl-project_button_favorite"
                   >
                     {project.status === "Favori" ? (
-                      <IoBookmark className="pp-project_favorite" />
+                      <IoBookmark className="pl-project_favorite" />
                     ) : (
-                      <IoBookmarkOutline className="pp-project_favorite" />
+                      <IoBookmarkOutline className="pl-project_favorite" />
                     )}
                   </button>
                 </div>
-                <p className="pp-created_project_description">
+                <p className="pl-created_project_description">
                   {project.project_description}
                 </p>
-                <div className="pp-bottom_layout">
-                  <hr className="pp-line_issues" />
-                  <p className="pp-project_issues_total">
+                <div className="pl-bottom_layout">
+                  <hr className="pl-line_issues" />
+                  <p className="pl-project_issues_total">
                     {project.tasks.length}{" "}
                     {project.tasks.length === 1 ? "issue" : "issues"}
                   </p>
@@ -140,9 +140,9 @@ const ProjectList = () => {
           ))}
         </div>
       ) : (
-        <div className="pp-empty_projects">
+        <div className="pl-empty_projects">
           <img src={noProjectsIcon} alt="Empty Projects" />
-          <div className="pp-empty_text">There are no projects created yet</div>
+          <div className="pl-empty_text">There are no projects created yet</div>
         </div>
       )}
     </div>
