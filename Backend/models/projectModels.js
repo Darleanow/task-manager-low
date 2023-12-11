@@ -67,7 +67,7 @@ async function setFavourite(user_id, project_id, is_favourite) {
     return new Promise((resolve, reject) => {
       db.query(insertQuery, [user_id, project_id], (err, result) => {
         if (err) reject(err);
-        resolve("Projet ajouté aux favoris");
+        resolve("Added to favorites");
       });
     });
   } else {
@@ -79,7 +79,7 @@ async function setFavourite(user_id, project_id, is_favourite) {
     return new Promise((resolve, reject) => {
       db.query(deleteQuery, [user_id, project_id], (err, result) => {
         if (err) reject(err);
-        resolve("Projet retiré des favoris");
+        resolve("Removed from favorites");
       });
     });
   }

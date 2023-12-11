@@ -33,7 +33,7 @@ router.post("/add_project", authenticateToken, async (req, res) => {
 });
 
 router.post("/set_favourite", authenticateToken, async (req, res) => {
-  const { user_id, project_id, is_favourite } = req.body; // Ajout de user_id
+  const { user_id, project_id, is_favourite } = req.body;
 
   try {
     const result = await projectModel.setFavourite(

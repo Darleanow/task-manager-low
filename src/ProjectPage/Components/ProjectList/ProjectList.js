@@ -1,25 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
-
 import "./ProjectList.scss";
 
 /**
- * ProjectList component fetches and displays a list of projects for a user.
- * It also periodically updates the list every 10 seconds.
+ * Component to display and manage a list of projects.
+ * It fetches the user's projects from an API, allows setting projects as favorites,
+ * and updates the list every 10 seconds.
  */
 const ProjectList = () => {
-  // Get user id from the Redux store
   const userId = useSelector((state) => state.auth.user.user_id);
-
-  // Image to display when there are no projects
   const noProjectsIcon = process.env.PUBLIC_URL + "/images/NoProject.svg";
-
-  // State to track if the user has projects and to store the projects
   const [hasProjects, setHasProjects] = useState(false);
   const [projects, setProjects] = useState([]);
 
-  // Function to fetch projects for the user
+  /**
+   * Fetches the current user's projects from the server.
+   * Sorts the projects based on their 'favorite' status and updates component state.
+   * @async
+   */
   const getUserProjects = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
@@ -36,30 +35,72 @@ const ProjectList = () => {
 
       if (response.ok) {
         const projs = await response.json();
-        setProjects(projs);
+        const sortedProjects = projs.sort((a, b) =>
+          a.status === "Favori" ? -1 : b.status === "Favori" ? 1 : 0
+        );
+        setProjects(sortedProjects);
         setHasProjects(projs.length > 0);
       }
     } catch (err) {
-      console.log("Error fetching projects: ", err);
+      console.error("Error fetching projects:", err);
     }
   }, [userId]);
 
-  // useEffect to fetch projects on mount and at regular intervals
+  /**
+   * Updates the 'favorite' status of a project for the user.
+   * @param {string} projectId - The ID of the project to update.
+   * @param {boolean} isFavourite - New 'favorite' status of the project.
+   * @async
+   */
+  const setProjectAsFavourite = useCallback(
+    async (projectId, isFavourite) => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:3333/projects/set_favourite`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              project_id: projectId,
+              is_favourite: isFavourite,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          setProjects((prevProjects) =>
+            prevProjects.map((project) =>
+              project.id === projectId
+                ? { ...project, isFav: isFavourite }
+                : project
+            )
+          );
+          getUserProjects();
+        }
+      } catch (err) {
+        console.error("Error setting project as favorite:", err);
+      }
+    },
+    [getUserProjects, userId]
+  );
+
   useEffect(() => {
     getUserProjects();
     const interval = setInterval(getUserProjects, 10000);
     return () => clearInterval(interval);
-  }, [getUserProjects, userId]);
+  }, [getUserProjects]);
 
-  // Render the project list or a message if there are no projects
   return (
     <div className="pp-main_content">
       {hasProjects ? (
-        // Mapping over projects to render each project
         <div className="pp-project_list">
           {projects.map((project) => (
-            <div key={project.id} className="pp-project_child">
-              {/* Project information */}
+            <div key={project.project_id} className="pp-project_child">
               <div className="pp-placeholder_projectIcon">
                 <p className="pp-placeholder_text_icon">
                   {project.project_name.at(0)}
@@ -69,10 +110,12 @@ const ProjectList = () => {
                 <div className="pp-project_title_and_favs">
                   <p className="pp-project_title">{project.project_name}</p>
                   <button
-                    onClick={() => {
-                      // Toggle favorite status
-                      project.isFav = !project.isFav;
-                    }}
+                    onClick={() =>
+                      setProjectAsFavourite(
+                        project.project_id,
+                        project.status !== "Favori"
+                      )
+                    }
                     className="pp-project_button_favorite"
                   >
                     {project.status === "Favori" ? (
@@ -97,11 +140,8 @@ const ProjectList = () => {
           ))}
         </div>
       ) : (
-        // Display if there are no projects
         <div className="pp-empty_projects">
-          <div className="pp-svg">
-            <img src={noProjectsIcon} alt="Empty Projects" />
-          </div>
+          <img src={noProjectsIcon} alt="Empty Projects" />
           <div className="pp-empty_text">There are no projects created yet</div>
         </div>
       )}

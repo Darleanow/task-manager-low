@@ -118,6 +118,7 @@
           }
         }
 
+        // Styles for the project description
         .pp-created_project_description {
           display: flex;
           margin-top: 1vh;
@@ -132,17 +133,21 @@
           line-height: normal;
         }
 
+        // Bottom (line and issues)
         .pp-bottom_layout {
           display: flex;
           margin-top: auto;
           justify-content: center;
           flex-direction: column;
 
+          // Line styling
           .pp-line_issues {
             width: 40%;
             margin-left: 5vw;
             background: #6a6a6a;
           }
+
+          // Issues count styling
           .pp-project_issues_total {
             margin-left: 9.5vw;
             color: #fff;
@@ -174,12 +179,14 @@
     align-items: center;
     justify-content: center;
 
+    // Styles of the icon if empty projects
     .pp-svg {
       margin-top: 10vh;
       width: 15vw;
       height: 15vh;
     }
 
+    // Styles for the info text below the icon
     .pp-empty_text {
       width: 40%;
       margin-top: 10rem;
