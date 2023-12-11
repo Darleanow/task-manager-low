@@ -377,7 +377,7 @@ const ProjectPage = () => {
           </Modal>
         </div>
       </div>
-      <ProjectList user_id_prop={userId} />
+      <ProjectList />
     </div>
   );
 };
