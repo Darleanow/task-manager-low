@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../Utils/Routing/store";
 import { useEffect, useState } from "react";
-import { login } from "../Utils/Routing/store";
+
+import { useNavigate } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "../Utils/Routing/store";
+
 import { jwtDecode } from "jwt-decode";
-import { checkTokenValidity } from "../Utils/BulkUtilsImport";
-import Modal from "react-modal";
-import { MinidenticonImg } from "../Utils/BulkUtilsImport";
-import { IoMdClose } from "react-icons/io";
-import { useSelector } from "react-redux";
-import TagsInput from "react-tagsinput";
+import { checkTokenValidity, MinidenticonImg } from "../Utils/BulkUtilsImport";
+
 import { FaCheck } from "react-icons/fa6";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosAdd, IoMdClose } from "react-icons/io";
+
+import Modal from "react-modal";
+import TagsInput from "react-tagsinput";
 
 import Notifications from "./Components/Notifications/Notifications";
 import ProjectList from "./Components/ProjectList/ProjectList";
