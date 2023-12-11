@@ -1,36 +1,60 @@
 const db = require("../config/dbConfig");
 
 async function getUserProjects(userID) {
-  const query = `
-        SELECT 
-            p.project_id, 
-            p.project_name, 
-            p.project_description, 
-            CASE 
-                WHEN f.project_id IS NOT NULL THEN 'Favori' 
-                ELSE 'Normal' 
-            END AS status 
-        FROM 
-            Projects p 
-        JOIN 
-            UserProjects up ON p.project_id = up.project_id 
-        LEFT JOIN 
-            Favorites f ON p.project_id = f.project_id AND f.user_id = up.user_id 
-        WHERE 
-            up.user_id = ?;
-    `;
+  const projectsQuery = `
+    SELECT 
+        p.project_id, 
+        p.project_name, 
+        p.project_description, 
+        CASE 
+            WHEN f.project_id IS NOT NULL THEN 'Favori' 
+            ELSE 'Normal' 
+        END AS status 
+    FROM 
+        Projects p 
+    JOIN 
+        UserProjects up ON p.project_id = up.project_id 
+    LEFT JOIN 
+        Favorites f ON p.project_id = f.project_id AND f.user_id = up.user_id 
+    WHERE 
+        up.user_id = ?;
+  `;
 
   return new Promise((resolve, reject) => {
-    db.query(query, [userID], (err, results) => {
-      if (err) reject(err);
-      if (results.length > 0) {
-        resolve(results);
-      } else {
-        resolve(null);
+    db.query(projectsQuery, [userID], async (err, projects) => {
+      if (err) {
+        reject(err);
+        return;
       }
+
+      if (projects.length === 0) {
+        resolve([]);
+        return;
+      }
+
+      // For each project, fetch its tasks
+      const projectsWithTasks = await Promise.all(projects.map(async (project) => {
+        const tasksQuery = `
+          SELECT * FROM Tasks WHERE project_id = ?;
+        `;
+        const tasks = await new Promise((resolve, reject) => {
+          db.query(tasksQuery, [project.project_id], (err, tasks) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(tasks);
+            }
+          });
+        });
+
+        return { ...project, tasks };
+      }));
+
+      resolve(projectsWithTasks);
     });
   });
 }
+
 
 async function setFavourite(user_id, project_id, is_favourite) {
   if (is_favourite) {
