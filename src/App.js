@@ -11,7 +11,7 @@ const App = () => {
         <Route path="/" element={<AuthentPage />} />
         <Route path="/projects" element={<ProtectedRoute />}>
           <Route index element={<ProjectPage />} />
-          <Route path=":projectId/tasks" element={<TasksPage />} />
+          <Route path=":projectId" element={<TasksPage />} />
         </Route>
       </Routes>
     </Router>
