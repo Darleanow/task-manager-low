@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS Projects (
 CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
+    user_role VARCHAR(255),
+    user_picture BLOB,
     email VARCHAR(255) NOT NULL UNIQUE, -- Assure que les e-mails sont uniques
     password VARCHAR(255) NOT NULL -- Devrait être stocké comme un hash, pas en clair
 );
@@ -65,3 +67,23 @@ CREATE TABLE IF NOT EXISTS Favorites (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
 );
+
+-- Table des projets des utilisateurs qui ne sont pas favoris
+CREATE TABLE IF NOT EXISTS UserProjects (
+    user_id INT,
+    project_id INT,
+    PRIMARY KEY (user_id, project_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    notification_text TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    metadatas TEXT,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
