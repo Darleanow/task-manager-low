@@ -43,7 +43,7 @@
   justify-content: flex-start;
   background: #202020;
   box-shadow: 0px 0px 50px 5px rgba(20, 20, 20, 0.25);
-  height: 6.75rem;
+  min-height: 6.75rem;
 
   .pp-logo {
     width: 3.4375rem;
@@ -90,7 +90,7 @@
 .pp-second_bar {
   border-bottom: 1px solid #505050;
   background: #2e2e2e;
-  height: 5.5rem;
+  min-height: 5.5rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -564,6 +564,11 @@
   margin-left: auto;
   margin-right: 15px;
   color: rgba(94, 138, 83, 0.589);
+}
+
+.pp-users_added_project {
+  display: flex;
+  flex-direction: row;
 }
 
 .pp-user_container {

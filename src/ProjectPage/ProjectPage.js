@@ -334,7 +334,7 @@ const ProjectPage = () => {
                       </Modal>
                     </legend>
                     {projectUsers.length > 0 ? (
-                      <>
+                      <div className="pp-users_added_project">
                         {projectUsers.slice(0, 3).map((user, index) => (
                           <div className="pp-user_container" key={index}>
                             <div className="pp-user_picture">{user.photo}</div>
@@ -346,7 +346,7 @@ const ProjectPage = () => {
                             et {projectUsers.length - 3} de plus...
                           </div>
                         )}
-                      </>
+                      </div>
                     ) : (
                       <div className="pp-no_added_users">Add a user!</div>
                     )}
