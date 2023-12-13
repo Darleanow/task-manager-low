@@ -103,7 +103,7 @@ const ProjectList = () => {
             <div key={project.project_id} className="pl-project_child">
               <div className="pl-placeholder_projectIcon">
                 <p className="pl-placeholder_text_icon">
-                  {project.project_name.at(0)}
+                  {project.project_name.at(0).toUpperCase()}
                 </p>
               </div>
               <div className="pl-project_info">
