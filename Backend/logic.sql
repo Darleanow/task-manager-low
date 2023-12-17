@@ -39,6 +39,22 @@ CREATE TABLE IF NOT EXISTS Tasks (
     FOREIGN KEY (status_id) REFERENCES Statuses(status_id) ON DELETE SET NULL
 );
 
+-- Création de la table des Tags
+CREATE TABLE IF NOT EXISTS Tags (
+    tag_id INT AUTO_INCREMENT PRIMARY KEY,
+    tag_name VARCHAR(255) NOT NULL UNIQUE,
+    tag_color VARCHAR(7) -- Format HEX de couleur, ex: #FFFFFF
+);
+
+-- Table de jointure TaskTags pour associer des tags aux tâches
+CREATE TABLE IF NOT EXISTS TaskTags (
+    task_id INT,
+    tag_id INT,
+    PRIMARY KEY (task_id, tag_id),
+    FOREIGN KEY (task_id) REFERENCES Tasks(task_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES Tags(tag_id) ON DELETE CASCADE
+);
+
 -- Table des Assignations de Tâches pour lier les utilisateurs aux tâches qui leur sont assignées
 CREATE TABLE IF NOT EXISTS TaskAssignments (
     task_id INT,
