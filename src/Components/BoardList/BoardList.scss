@@ -1,5 +1,15 @@
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #161616;
+  border: 1px solid #737373;
+}
+
 .bl-board_container {
-  width: 18vw;
+  min-width: 20vw;
+  max-width: 20vw;
   height: 77vh;
   margin-left: 1vh;
   margin-top: 2vh;
@@ -10,6 +20,14 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+.bl-droppable_area {
+  flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-bottom: 2vh;
+  margin: 1vh 5px;
 }
 
 .bl-title_bar {
@@ -23,7 +41,7 @@
   align-items: center;
   justify-content: space-between;
   user-select: none;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   p {
     margin: 0 10px;
@@ -47,7 +65,6 @@
   height: 100%;
 
   .bl-icon_add {
-    position: relative;
     border-radius: 16px;
     border: 3px dashed #a7a7a7;
     width: 166px;
