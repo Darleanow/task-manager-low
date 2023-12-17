@@ -12,3 +12,151 @@ html, body {
   flex-direction: row;
   gap: 1vw;
 }
+
+
+// Define color and font variables
+$color-border: #505050;
+$color-background: #2e2e2e;
+$color-dropdown-border: #969696;
+$color-dropdown-bg: #242424;
+$color-dropdown-text: #969696;
+$color-search-bg: #333;
+$color-search-text: #acabab;
+$color-button-border: #717171;
+$color-button-bg: #232323;
+$color-button-text: #b4b4b4;
+$color-button-hover-bg: #717171;
+$color-button-hover-border: #232323;
+$font-family-inter: "Inter", sans-serif;
+
+// Mixin for flexbox centering
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Mixin for common text styles
+@mixin text-style(
+  $size,
+  $weight: normal,
+  $line-height: normal,
+  $text-color: $color-dropdown-text
+) {
+  font-family: $font-family-inter;
+  font-size: $size;
+  font-style: normal;
+  font-weight: $weight;
+  line-height: $line-height;
+  color: $text-color;
+}
+
+// Extendable placeholder for button hover state
+%button-hover-state {
+  border: 1px solid $color-button-hover-border;
+  background: $color-button-hover-bg;
+  transition: 0.2s ease-in;
+}
+
+.smb-menu_bar_secondary {
+  @include flex-center;
+  justify-content: space-between;
+  width: 100vw;
+  height: 8.59vh;
+  border-bottom: 1px solid $color-border;
+  background: $color-background;
+  user-select: none;
+
+  :focus {
+    outline: none;
+  }
+
+  .smb-board_layouts {
+    flex: none;
+    margin-right: 2vw;
+  }
+
+  .smb-board_dropdown {
+    @include text-style(1.7vh);
+    width: 176px;
+    height: 4.59vh;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 0.5px solid $color-dropdown-border;
+    background: $color-dropdown-bg;
+    padding-left: 10px;
+    margin-left: 50px;
+
+    .smb-dropdown_option {
+      @include text-style(1.7vh);
+    }
+  }
+
+  .smb-search_filters_container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0 1vw;
+
+    .smb-search_filters {
+      width: 95%;
+      height: 4.59vh;
+      margin: 0 20px;
+      padding: 0 10px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      border: 0.5px solid $color-dropdown-border;
+      background: $color-search-bg;
+      @include text-style(2vh);
+      color: $color-search-text;
+      transition: 0.2s ease-in;
+    }
+
+    .smb-search_filters:focus {
+      transition: 0.2s ease-in;
+      border: 0.5px solid $color-button-bg;
+    }
+  }
+
+  .smb-small_buttons {
+    flex: none;
+    @include flex-center;
+  }
+
+  .smb-small_action_button {
+    @include text-style(1.5vh);
+    width: 4.9vw;
+    height: 3.4vh;
+    margin: 3.2vh 2.3vh;
+    border-radius: 8px;
+    border: 1px solid $color-button-border;
+    background: $color-button-bg;
+    color: $color-button-text;
+    text-align: center;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+
+    &:hover {
+      @extend %button-hover-state;
+    }
+  }
+}
+
+.tp-modal {
+  position: absolute;
+  top: 8rem;
+  left: 25rem;
+  right: 25rem;
+  bottom: 8rem;
+  border-radius: 2rem;
+  border: 2px solid #626262;
+  background: #232323;
+}
+
+.tp-modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(27, 27, 27, 0.93);
+}
