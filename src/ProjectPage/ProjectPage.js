@@ -16,6 +16,7 @@ import TagsInput from "react-tagsinput";
 
 import Notifications from "./Components/Notifications/Notifications";
 import ProjectList from "./Components/ProjectList/ProjectList";
+import Navbar from "./../Components/SlidingMenuBar/Navbar";
 
 import "./ProjectPage.scss";
 
@@ -171,7 +172,8 @@ const ProjectPage = () => {
         <div className="pp-title">Projects</div>
         <div className="pp-right_section">
           <Notifications />
-          <button onClick={handleLogout}>Log out</button>
+          <Navbar handleLogout={handleLogout}/>
+          {/* <button onClick={handleLogout}>Log out</button> */}
           <div className="pp-profile"></div>
         </div>
       </div>
