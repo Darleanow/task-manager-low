@@ -41,12 +41,12 @@ const Card = React.memo(
             <span
               key={index}
               style={{
-                backgroundColor: tag[1],
-                color: getTextColorFromBackground(tag[1]),
+                backgroundColor: tag.tag_color,
+                color: getTextColorFromBackground(tag.tag_color),
               }}
               className="cd-tag"
             >
-              {tag[0]}
+              {tag.tag_name}
             </span>
           ))}
         </div>

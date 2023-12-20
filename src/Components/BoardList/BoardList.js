@@ -8,6 +8,8 @@ const BoardList = ({ boardId, boardName, tasks }) => {
 
   useEffect(() => {
     setAreThereTasks(tasks.length > 0);
+
+    console.log(tasks);
   }, [tasks]);
 
   return (
@@ -41,7 +43,7 @@ const BoardList = ({ boardId, boardName, tasks }) => {
                         p_Name={task.task_name}
                         p_Description={task.description}
                         p_TaskId={task.task_id}
-                        p_Tags={[]} //task.tags
+                        p_Tags={task.tags}
                         p_Weight={task.weight}
                         p_DueDate={task.due_date}
                         p_User={"Hello"}

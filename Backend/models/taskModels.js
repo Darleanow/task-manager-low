@@ -348,17 +348,29 @@ async function getListsByProjectId(projectId) {
       l.list_name,
       l.status_id,
       JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'task_id', t.task_id,
-          'project_id', t.project_id,
-          'list_id', t.list_id,
-          'task_name', t.task_name,
-          'description', t.description,
-          'status_id', t.status_id,
-          'complexity', t.complexity,
-          'creation_date', t.creation_date,
-          'due_date', t.due_date
-        )
+          JSON_OBJECT(
+              'task_id', t.task_id,
+              'project_id', t.project_id,
+              'list_id', t.list_id,
+              'task_name', t.task_name,
+              'description', t.description,
+              'status_id', t.status_id,
+              'complexity', t.complexity,
+              'creation_date', t.creation_date,
+              'due_date', t.due_date,
+              'tags', (
+                  SELECT JSON_ARRAYAGG(
+                      JSON_OBJECT(
+                          'tag_id', tt.tag_id,
+                          'tag_name', tg.tag_name,
+                          'tag_color', tg.tag_color
+                      )
+                  ) 
+                  FROM TaskTags tt 
+                  LEFT JOIN Tags tg ON tt.tag_id = tg.tag_id
+                  WHERE tt.task_id = t.task_id
+              )
+          )
       ) AS tasks
     FROM 
       Lists l
