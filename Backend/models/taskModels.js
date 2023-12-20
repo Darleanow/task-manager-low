@@ -96,9 +96,10 @@ async function getTasksByProjectId(projectId) {
         reject(err);
       } else {
         // Transforme les résultats en format JSON pour les tags
+        console.log(tasks);
         const formattedTasks = tasks.map((task) => ({
           ...task,
-          tags: task.tags ? JSON.parse(task.tags) : [],
+          tags: task.tags ? task.tags : [],
         }));
         resolve(formattedTasks);
       }
@@ -156,6 +157,39 @@ async function createTag(tagName, tagColor) {
   });
 }
 
+// Function to delete a tag
+async function deleteTag(tagId) {
+  const deleteQuery = `
+        DELETE FROM Tags
+        WHERE tag_id = ?;
+      `;
+
+  return new Promise((resolve, reject) => {
+    db.query(deleteQuery, [tagId], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("Tag deleted successfully");
+      }
+    });
+  });
+}
+
+// Function to get tags
+async function getTags() {
+  const query = `SELECT * FROM Tags;`;
+
+  return new Promise((resolve, reject) => {
+    db.query(query, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
 // Fonction pour associer un tag à une tâche
 async function addTagToTask(taskId, tagId) {
   const insertQuery = `
@@ -192,12 +226,208 @@ async function removeTagFromTask(taskId, tagId) {
   });
 }
 
+async function createStatus(status_name) {
+  const createStatus = `
+      INSERT INTO STATUSES (status_name) VALUES ?;
+    `;
+
+  return new Promise((resolve, reject) => {
+    db.query(createStatus, [status_name], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("Created status successfully");
+      }
+    });
+  });
+}
+
+async function createList(listName, projectId) {
+  console.log(listName);
+  return new Promise((resolve, reject) => {
+    db.beginTransaction((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      const statusCheck = `
+        SELECT status_id FROM STATUSES WHERE status_name = ?;
+      `;
+      db.query(statusCheck, [listName], (err, statusRows) => {
+        if (err) {
+          return db.rollback(() => {
+            reject(err);
+          });
+        }
+
+        let statusId;
+        if (statusRows.length === 0) {
+          const createStatus = `
+            INSERT INTO STATUSES (status_name) VALUES (?);
+          `;
+          db.query(createStatus, [listName], (err, statusResult) => {
+            if (err) {
+              return db.rollback(() => {
+                reject(err);
+              });
+            }
+            statusId = statusResult.insertId;
+            insertList();
+          });
+        } else {
+          statusId = statusRows[0].status_id;
+          insertList();
+        }
+
+        function insertList() {
+          const createList = `
+            INSERT INTO Lists (project_id, list_name, status_id) VALUES (?, ?, ?);
+          `;
+          db.query(
+            createList,
+            [projectId, listName, statusId],
+            (err, result) => {
+              if (err) {
+                return db.rollback(() => {
+                  reject(err);
+                });
+              }
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    reject(err);
+                  });
+                }
+                resolve("List and status created successfully");
+              });
+            }
+          );
+        }
+      });
+    });
+  });
+}
+
+async function deleteList(listName, projectId) {
+  return new Promise((resolve, reject) => {
+    db.beginTransaction((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      const deleteList = `
+        DELETE FROM Lists WHERE project_id = ? AND list_name = ?;
+      `;
+      db.query(deleteList, [projectId, listName], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            reject(err);
+          });
+        }
+
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              reject(err);
+            });
+          }
+          resolve("List deleted successfully");
+        });
+      });
+    });
+  });
+}
+
+async function getListsByProjectId(projectId) {
+  const query = `
+      SELECT 
+      l.list_id,
+      l.project_id,
+      l.list_name,
+      l.status_id,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'task_id', t.task_id,
+          'project_id', t.project_id,
+          'list_id', t.list_id,
+          'task_name', t.task_name,
+          'description', t.description,
+          'status_id', t.status_id,
+          'complexity', t.complexity,
+          'creation_date', t.creation_date,
+          'due_date', t.due_date
+        )
+      ) AS tasks
+    FROM 
+      Lists l
+    LEFT JOIN 
+      Tasks t ON l.list_id = t.list_id
+    WHERE 
+      l.project_id = ?
+    GROUP BY 
+      l.list_id;
+    `;
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [projectId], (err, lists) => {
+      if (err) {
+        reject(err);
+      } else {
+        const formattedLists = lists.map((list) => {
+          let tasks;
+          try {
+            // Essaie de parser tasks si c'est une chaîne JSON
+            tasks = JSON.parse(list.tasks);
+          } catch (e) {
+            // Si ça échoue, utilise list.tasks tel quel
+            tasks = list.tasks;
+          }
+
+          return {
+            list_id: list.list_id,
+            project_id: list.project_id,
+            list_name: list.list_name,
+            status_id: list.status_id,
+            tasks: tasks,
+          };
+        });
+        resolve(formattedLists);
+      }
+    });
+  });
+}
+
+async function updateList(listId, newListName, newStatusId) {
+  const updateQuery = `
+      UPDATE Lists SET list_name = ?, status_id = ? WHERE list_id = ?;
+    `;
+
+  return new Promise((resolve, reject) => {
+    db.query(updateQuery, [newListName, newStatusId, listId], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("List updated successfully");
+      }
+    });
+  });
+}
+
 module.exports = {
   createTask,
   getTasksByProjectId,
   updateTaskStatus,
   deleteTask,
   createTag,
+  deleteTag,
   addTagToTask,
   removeTagFromTask,
+  getTags,
+  createStatus,
+  createList,
+  deleteList,
+  getListsByProjectId,
+  updateList,
 };

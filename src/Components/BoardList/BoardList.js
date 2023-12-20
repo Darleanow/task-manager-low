@@ -3,7 +3,7 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import Card from "../Card/Card";
 import "./BoardList.scss";
 
-const BoardList = ({ boardId, tasks }) => {
+const BoardList = ({ boardId, boardName, tasks }) => {
   const [areThereTasks, setAreThereTasks] = useState(false);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const BoardList = ({ boardId, tasks }) => {
   return (
     <div className="bl-board_container">
       <div className="bl-title_bar">
-        <p>To do</p>
+        <p>{boardName}</p>
         <p className="bl-task_count">{areThereTasks ? tasks.length : "-"} </p>
       </div>
       <Droppable droppableId={boardId}>
@@ -25,7 +25,11 @@ const BoardList = ({ boardId, tasks }) => {
           >
             {areThereTasks ? (
               tasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
+                <Draggable
+                  key={task.task_id.toString()}
+                  draggableId={task.task_id.toString()}
+                  index={index}
+                >
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
@@ -34,13 +38,13 @@ const BoardList = ({ boardId, tasks }) => {
                       className="bl-card_spacing"
                     >
                       <Card
-                        p_Name={task.name}
+                        p_Name={task.task_name}
                         p_Description={task.description}
-                        p_TaskId={task.id}
-                        p_Tags={task.tags}
+                        p_TaskId={task.task_id}
+                        p_Tags={[]} //task.tags
                         p_Weight={task.weight}
-                        p_DueDate={task.dueDate}
-                        p_User={task.user}
+                        p_DueDate={task.due_date}
+                        p_User={"Hello"}
                       />
                     </div>
                   )}

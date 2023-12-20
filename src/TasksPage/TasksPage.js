@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { DragDropContext } from "react-beautiful-dnd";
-import Modal from "react-modal";
 
 import { jwtDecode } from "jwt-decode";
 import { checkTokenValidity } from "../Utils/BulkUtilsImport";
@@ -14,8 +12,10 @@ import { login } from "../Utils/Routing/store";
 
 import PrimaryMenuBar from "../Components/PrimaryMenuBar/PrimaryMenuBar";
 import BoardList from "../Components/BoardList/BoardList";
+import TaskCreation from "./Components/TaskCreation/TaskCreation";
 
-import { IoMdClose } from "react-icons/io";
+import { MinidenticonImg } from "../Utils/BulkUtilsImport";
+
 import "./TasksPage.scss";
 
 const reorder = (list, startIndex, endIndex) => {
@@ -34,134 +34,155 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 };
 
 const TasksPage = () => {
-  const initialBoards = {
-    "board-1": {
-      id: "board-1",
-      tasks: [
-        {
-          id: "1",
-          name: "Hello i'm a very long dumb text",
-          description: "Description of Task 1",
-          tags: [
-            ["urgent", "#4BB2C8"],
-            ["bug", "#FF8686"],
-          ],
-          weight: "3",
-          dueDate: new Date(2023, 6, 30).toDateString(),
-          user: { user_name: "User1", user_picture: "" },
-        },
-        {
-          id: "2",
-          name: "Task 2",
-          description: "Description of Task 2",
-          tags: [
-            ["feature", "#B486FF"],
-            ["enhancement", "#ffa500"],
-          ],
-          weight: "5",
-          dueDate: new Date(2023, 7, 15).toDateString(),
-          user: { user_name: "User2", user_picture: "" },
-        },
-      ],
-    },
-    "board-2": {
-      id: "board-2",
-      tasks: [
-        {
-          id: "3",
-          name: "Task 2",
-          description: "Description of Task 2",
-          tags: [
-            ["feature", "#B486FF"],
-            ["enhancement", "#ffa500"],
-          ],
-          weight: "5",
-          dueDate: new Date(2023, 7, 15).toDateString(),
-          user: { user_name: "User2", user_picture: "" },
-        },
-        {
-          id: "4",
-          name: "Task 2",
-          description: "Description of Task 2",
-          tags: [
-            ["feature", "#B486FF"],
-            ["enhancement", "#ffa500"],
-          ],
-          weight: "5",
-          dueDate: new Date(2023, 7, 15).toDateString(),
-          user: { user_name: "User2", user_picture: "" },
-        },
-        {
-          id: "5",
-          name: "Task 2",
-          description: "Description of Task 2",
-          tags: [
-            ["feature", "#B486FF"],
-            ["enhancement", "#ffa500"],
-            ["enhancement", "#ffa500"],
-            ["enhancement", "#ffa500"],
-          ],
-          weight: "5",
-          dueDate: new Date(2023, 7, 15).toDateString(),
-          user: { user_name: "User2", user_picture: "" },
-        },
-      ],
-    },
-  };
-
-  const [boards, setBoards] = useState(initialBoards);
+  const [boards, setBoards] = useState([]);
 
   const [isOpenCreateTask, setIsOpenCreateTask] = useState(false);
 
   // Correct the modal open/close handlers
   const handleOpenCreateTask = () => setIsOpenCreateTask(true);
-  const handleCloseCreateTask = () => setIsOpenCreateTask(false);
+
+  // Users
+  const [fetchedUsers, setFetchedUsers] = useState([]);
+  const [formattedUsers, setFormattedUsers] = useState([]);
+
+  // const onDragEnd = (result) => {
+  //   const { source, destination } = result;
+
+  //   // dropped outside the list
+  //   if (!destination) return;
+
+  //   if (source.droppableId === destination.droppableId) {
+  //     const reorderedItems = reorder(
+  //       boards[source.droppableId].tasks,
+  //       source.index,
+  //       destination.index
+  //     );
+  //     setBoards((prevBoards) => ({
+  //       ...prevBoards,
+  //       [source.droppableId]: {
+  //         ...prevBoards[source.droppableId],
+  //         tasks: reorderedItems,
+  //       },
+  //     }));
+  //   } else {
+  //     const { sourceClone, destClone } = move(
+  //       boards[source.droppableId].tasks,
+  //       boards[destination.droppableId].tasks,
+  //       source,
+  //       destination
+  //     );
+  //     setBoards((prevBoards) => ({
+  //       ...prevBoards,
+  //       [source.droppableId]: {
+  //         ...prevBoards[source.droppableId],
+  //         tasks: sourceClone,
+  //       },
+  //       [destination.droppableId]: {
+  //         ...prevBoards[destination.droppableId],
+  //         tasks: destClone,
+  //       },
+  //     }));
+  //   }
+  // };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
-
-    // dropped outside the list
+  
     if (!destination) return;
-
+  
+    const sourceIndex = boards.findIndex(board => board.list_id.toString() === source.droppableId);
+    const destIndex = boards.findIndex(board => board.list_id.toString() === destination.droppableId);
+  
+    if (sourceIndex === -1 || destIndex === -1) return;
+  
     if (source.droppableId === destination.droppableId) {
-      const reorderedItems = reorder(
-        boards[source.droppableId].tasks,
+      // Déplacement dans la même liste
+      const reorderedTasks = reorder(
+        boards[sourceIndex].tasks,
         source.index,
         destination.index
       );
-      setBoards((prevBoards) => ({
-        ...prevBoards,
-        [source.droppableId]: {
-          ...prevBoards[source.droppableId],
-          tasks: reorderedItems,
-        },
-      }));
+      const newBoards = Array.from(boards);
+      newBoards[sourceIndex] = {
+        ...boards[sourceIndex],
+        tasks: reorderedTasks,
+      };
+      setBoards(newBoards);
     } else {
+      // Déplacement entre listes différentes
       const { sourceClone, destClone } = move(
-        boards[source.droppableId].tasks,
-        boards[destination.droppableId].tasks,
+        boards[sourceIndex].tasks,
+        boards[destIndex].tasks,
         source,
         destination
       );
-      setBoards((prevBoards) => ({
-        ...prevBoards,
-        [source.droppableId]: {
-          ...prevBoards[source.droppableId],
-          tasks: sourceClone,
-        },
-        [destination.droppableId]: {
-          ...prevBoards[destination.droppableId],
-          tasks: destClone,
-        },
-      }));
+      const newBoards = Array.from(boards);
+      newBoards[sourceIndex] = {
+        ...boards[sourceIndex],
+        tasks: sourceClone,
+      };
+      newBoards[destIndex] = {
+        ...boards[destIndex],
+        tasks: destClone,
+      };
+      setBoards(newBoards);
     }
   };
+  
 
   const userId = useSelector((state) => state.auth.user.user_id);
   const { projectId } = useParams();
 
+  const [tags, setTags] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+
+  //const [newTagColor, setNewTagColor] = useState("#FFFFFF");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  async function fetchUsers() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/users/get_all_users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const transformedUsers = data.map((user) => ({
+          id: user.user_id,
+          username: user.full_name,
+          role: user.user_role || "User",
+          photo:
+            user.user_picture !== null ? (
+              URL.createObjectURL(user.user_picture)
+            ) : (
+              <MinidenticonImg
+                username={user.full_name}
+                saturation="90"
+                width="30"
+                height="30"
+              />
+            ),
+          isAdded: false,
+        }));
+        setFetchedUsers(transformedUsers);
+      } else {
+        // Handle response errors
+        console.error("Failed to fetch users");
+      }
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  }
 
   async function fetchTasksByProjectId(projectId) {
     const token = localStorage.getItem("token");
@@ -183,40 +204,85 @@ const TasksPage = () => {
     }
   }
 
-  async function createTask(
-    projectId,
-    taskName,
-    description,
-    statusId,
-    complexity,
-    dueDate,
-    tags
-  ) {
+  async function fetchListsAndTasks(projectId) {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:3333/tasks/create_task", {
+      // Fetch lists
+      const listsResponse = await fetch(
+        `http://localhost:3333/tasks/lists/${projectId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!listsResponse.ok) throw new Error("Failed to fetch lists");
+      const lists = await listsResponse.json();
+      const boardsWithValidTasks = lists.map(board => ({
+        ...board,
+        tasks: board.tasks && board.tasks.length > 0 && board.tasks[0].task_id != null 
+               ? board.tasks 
+               : [] // Filtrer les tâches 'null'
+      }));
+      setBoards(boardsWithValidTasks);
+      //setBoards(lists);
+    } catch (error) {
+      console.error("Error fetching lists and tasks", error);
+    }
+  }
+
+  const createBoard = async (boardName) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:3333/tasks/lists/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          projectId,
-          taskName,
-          description,
-          statusId,
-          complexity,
-          dueDate,
-          tags,
+          listName: boardName,
+          projectId: projectId,
+          statusName: boardName,
         }),
       });
+      if (!response.ok) throw new Error("Failed to create board");
+
+      // Fetch updated lists and tasks
+      fetchListsAndTasks(projectId);
+    } catch (error) {
+      console.error("Error creating board", error);
+    }
+  };
+
+  const handleAddBoard = () => {
+    // Prompt for board name and create it
+    const boardName = prompt("Enter the name for the new board:");
+    if (boardName) {
+      createBoard(boardName);
+    }
+  };
+
+  async function getTags() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        "http://localhost:3333/tasks/tags/get_tags",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       if (response.ok) {
-        console.log("Task created successfully");
+        const tagsData = await response.json();
+        setTags(tagsData);
       } else {
-        console.error("Failed to create task");
+        console.error("Failed to fetch tags");
       }
     } catch (error) {
-      console.error("Error creating task", error);
+      console.error("Error fetching tags", error);
     }
   }
 
@@ -275,7 +341,26 @@ const TasksPage = () => {
       dispatch(login(userDetails));
     }
 
-    fetchTasksByProjectId(projectId);
+    fetchUsers();
+
+    const formatUsers = fetchedUsers.map((user) => ({
+      value: user.id,
+      label: user.username,
+      photo: user.photo.props,
+    }));
+
+    setFormattedUsers(formatUsers);
+
+    getTags();
+
+    const transformedTags = tags.map((tag) => ({
+      value: tag.tag_id,
+      label: tag.tag_name,
+      color: tag.tag_color,
+    }));
+    setTagOptions(transformedTags);
+
+    fetchListsAndTasks(projectId);
   }, [projectId, dispatch]);
 
   return (
@@ -309,40 +394,38 @@ const TasksPage = () => {
           </div>
           <div className="smb-small_buttons">
             <button className="smb-small_action_button">Edit board</button>
-            <button className="smb-small_action_button">Add list</button>
+            <button
+              className="smb-small_action_button"
+              onClick={handleAddBoard}
+            >
+              Add list
+            </button>
             <button
               className="smb-small_action_button"
               onClick={handleOpenCreateTask}
             >
               New Issue
             </button>
-            <Modal
-              isOpen={isOpenCreateTask}
-              onRequestClose={handleCloseCreateTask}
-              contentLabel="Create Task"
-              className={"tp-modal"}
-              overlayClassName={"tp-modal_overlay"}
-            >
-              <div className="tp-flex_content">
-                <div className="tp-flex_first_bar">
-                  <p className="tp-title">Title (required)</p>
-                  <IoMdClose className="tp-close" onClick={handleCloseCreateTask}/>
-                </div>
-                <input type="text" placeholder="Enter title..."></input>
-                <div className="tp-flex_second_bar">
-                  <p className="tp-description">Description</p>
-                  {/* Rich text description support */}
-                </div>
-
-              </div>
-            </Modal>
+            <TaskCreation
+              isOpenCreateTask={isOpenCreateTask}
+              setIsOpenCreateTask={setIsOpenCreateTask}
+              formattedUsers={formattedUsers}
+              tagOptions={tagOptions}
+              setTagOptions={setTagOptions}
+              fetchTasksByProjectId={fetchTasksByProjectId}
+            />
           </div>
         </div>
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="pp-main_content">
-          {Object.entries(boards).map(([boardId, board]) => (
-            <BoardList key={boardId} boardId={boardId} tasks={board.tasks} />
+          {boards.map((board) => (
+            <BoardList
+              key={board.list_id}
+              boardId={board.list_id.toString()}
+              boardName={board.list_name}
+              tasks={board.tasks}
+            />
           ))}
         </div>
       </DragDropContext>

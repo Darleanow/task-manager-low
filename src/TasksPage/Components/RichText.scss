@@ -1,0 +1,113 @@
+.editor-container {
+  height: 150px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ec-editor_content {
+  overflow: auto;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd !important;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.mb-option_bar {
+  background-color: #232323;
+  position: sticky;
+  top: 0;
+  display: flex;
+  padding: 0 25px;
+  z-index: 999999;
+  padding: 5px 10px;
+  border-radius: 8px 8px 0 0;
+  gap: 10px;
+  border-bottom: 1px solid white;
+}
+
+.option {
+  color: rgb(129, 129, 129);
+  font-size: 18px;
+  padding: 5px 5px;
+  cursor: pointer;
+  transition: 0.2s ease-in;
+  border-radius: 8px;
+}
+
+.option:hover {
+  color: white;
+  background-color: rgb(104, 104, 104);
+  transition: 0.2s ease-in;
+}
+
+.tiptap {
+  color: #adb5bd !important;
+  padding: 10px 10px;
+  margin-top: -10px;
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  code {
+    background-color: rgba(97, 97, 97, 0.1);
+    color: #616161;
+  }
+
+  pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: "JetBrainsMono", monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  pre code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(13, 13, 13, 0.1);
+  }
+
+  hr {
+    margin: 1rem 0;
+  }
+
+  strong {
+    font-weight: bold !important;
+  }
+
+  em {
+    font-style: italic !important;
+  }
+}
