@@ -79,7 +79,7 @@ const AuthentPage = () => {
         setFormSubmitted(false);
       }
     } else if (email.length === 0) {
-      setEmailErrorMessage("Email is required");
+      setEmailErrorMessage("Please enter a valid email address.");
 
       if (formSubmitted) {
         makeErrorToast(emailErrorMessage, "emailToastId");
