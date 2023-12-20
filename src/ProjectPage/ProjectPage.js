@@ -171,10 +171,14 @@ const ProjectPage = () => {
         </div>
         <div className="pp-title">Projects</div>
         <div className="pp-right_section">
-          <Notifications />
-          <Navbar handleLogout={handleLogout}/>
-          {/* <button onClick={handleLogout}>Log out</button> */}
-          <div className="pp-profile"></div>
+         
+          <div className="pp-profile_picture">
+            <Notifications />
+            <Navbar
+              handleLogout={handleLogout}
+              username={localStorage.getItem("fullName")}
+            />
+          </div>
         </div>
       </div>
       <div className="pp-second_bar">
