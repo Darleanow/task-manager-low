@@ -25,6 +25,16 @@ CREATE TABLE IF NOT EXISTS Statuses (
     status_name VARCHAR(255) NOT NULL UNIQUE -- Assure que les noms de statut sont uniques
 );
 
+-- Table des Lists représentant les listes de tâches
+CREATE TABLE IF NOT EXISTS Lists (
+    list_id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    list_name VARCHAR(255) NOT NULL,
+    status_id INT, -- Associating a status with a list
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE,
+    FOREIGN KEY (status_id) REFERENCES Statuses(status_id) ON DELETE SET NULL
+);
+
 -- Table des Tâches représentant les éléments de travail à accomplir
 CREATE TABLE IF NOT EXISTS Tasks (
     task_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,13 +114,3 @@ CREATE TABLE IF NOT EXISTS Notifications (
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS Lists (
-    list_id INT AUTO_INCREMENT PRIMARY KEY,
-    project_id INT NOT NULL,
-    list_name VARCHAR(255) NOT NULL,
-    status_id INT, -- Associating a status with a list
-    FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE,
-    FOREIGN KEY (status_id) REFERENCES Statuses(status_id) ON DELETE SET NULL
-);
-
