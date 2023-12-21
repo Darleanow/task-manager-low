@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './Utils/Routing/store';
+import ProtectedRoute from "./Utils/Routing/ProtectedRoute";
+import ProjectPage from "./ProjectPage/ProjectPage";
+import TasksPage from "./TasksPage/TasksPage";
+import AuthentPage from "./AuthentPage/AuthentPage";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <PersistGate loading={null} persistor={persistor}>
+        <Routes>
+          <Route path="/" element={<AuthentPage />} />
+          <Route path="/projects" element={<ProtectedRoute />}>
+            <Route index element={<ProjectPage />} />
+            <Route path=":projectId" element={<TasksPage />} />
+          </Route>
+        </Routes>
+      </PersistGate>
+    </Router>
   );
-}
+};
 
 export default App;

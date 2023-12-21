@@ -1,0 +1,112 @@
+/* Styles for the main notifications container. */
+.n-notifications_container {
+  display: flex;
+  margin-right: -1.5vw;
+  flex-direction: column;
+  color: rgb(172, 172, 172);
+
+  /* Styles for the notification icon within the container. */
+  .n-notifications_icon {
+    font-size: 26px;
+    transition: 0.2s ease-in;
+    flex-shrink: 0;
+  }
+
+  /* Hover effect for the notification icon. */
+  .n-notifications_icon:hover {
+    cursor: pointer;
+    transition: 0.2s ease-in;
+  }
+
+  /* Style for the notification circle (unread notifications indicator). */
+  .n-notification_circle {
+    color: red;
+    font-size: 8px;
+    position: absolute;
+    margin-left: 15px;
+    margin-top: 1px;
+  }
+
+  /* Dropdown container for displaying notifications. */
+  .n-notification-dropdown {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 22vw;
+    margin-left: -15vw;
+    margin-top: 5vh;
+    border: 1px solid rgb(66, 66, 66);
+    border-radius: 8px;
+    background-color: #252525;
+
+    /* Title section in the notification dropdown. */
+    .n-notifications_title {
+      padding-top: 2vh;
+      padding-left: 0.7vw;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+
+      /* Style of the icon 'mark all as read' .*/
+      .n-mark_read {
+        font-size: 18px;
+        margin-right: 1vw;
+        margin-top: -5px;
+        padding: 5px 5px;
+      }
+
+      /* Hover effect for the 'mark all as read' icon. */
+      .n-mark_read:hover {
+        cursor: pointer;
+        border-radius: 8px;
+        background-color: rgba(112, 112, 112, 0.308);
+      }
+    }
+
+    /* Separator line within the notification dropdown. */
+    .n-separator_notifications {
+      width: 90%;
+      border: none;
+      border-top: 1px solid rgb(61, 61, 61);
+    }
+
+    /* Style for the 'All clear' message area in the notification dropdown. */
+    .n-align_clear {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Individual notification item style in the dropdown. */
+    .n-notification_item {
+      padding: 15px 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.4vw;
+      font-size: 16px;
+    }
+
+    /* Status unread notification. */
+    .n-notification_status,
+    .n-notification_status_active {
+      flex-shrink: 0;
+      text-wrap: auto;
+    }
+    .n-notification_status_active {
+      color: rgba(77, 197, 77, 0.74);
+    }
+
+    .n-notification_item:hover {
+      background-color: rgba(163, 163, 163, 0.068);
+      cursor: pointer;
+    }
+
+    .n-notification_item:first-child:hover {
+      border-radius: 8px 8px 0 0;
+    }
+
+    .n-notification_item:last-child:hover {
+      border-radius: 0 0 8px 8px;
+    }
+  }
+}

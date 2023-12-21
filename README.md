@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# Developer Setup Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Environment Setup
 
-## Available Scripts
+Before you begin, ensure that your Windows environment is properly set up with the necessary tools. Here's a checklist:
 
-In the project directory, you can run:
+- **Node.js**: Required for running JavaScript on the server-side.
+- **npm**: Node's package manager, used for managing JavaScript dependencies.
+- **MySQL**: A relational database management system.
+- **Git**: Version control system for tracking changes in source code.
 
-### `npm start`
+### Initial Steps
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Install Required Software**:
+   - Ensure `node`, `npm`, `mysql`, and `git` are installed on your system.
+   - Verify the installations by running `node -v`, `npm -v`, `mysql --version`, and `git --version` in your command prompt.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. **Run Setup Script**:
+   - Execute the `setup_backend.ps1` PowerShell script to configure the backend.
+   - **Important**: Before running the script, please read the [Setup Backend Instructions](./Setup.md) thoroughly. You will need to provide your MySQL configuration details during the setup.
 
-### `npm test`
+## Git Configuration for Efficient Branch Management
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+To streamline the process of working with Git branches, especially when dealing with updates from the `develop` branch, use the following Git alias.
 
-### `npm run build`
+### Setting Up the `cleanbranch` Alias
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+git config --global alias.cleanbranch '!f() { git checkout origin/develop && git fetch && git pull origin develop && git checkout -b "$@" && git push -u origin "$@" && git fetch --prune && git branch --merged | grep -v "\*" | grep -v "release" | grep -v "develop" | xargs -n 1 git branch -d; }; f'
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### What This Alias Does
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Checks out `origin/develop`**:
+  - Ensures you start from the latest state of the `develop` branch.
+- **Fetches and Pulls from `origin/develop`**:
+  - Updates your local `develop` branch with the latest changes from the remote.
+- **Creates a New Branch**:
+  - Generates a new branch with the name you specify.
+- **Pushes the New Branch to Remote**:
+  - Pushes the new branch to `origin` and sets up tracking, linking `origin/<branch-name>` with your local branch.
 
-### `npm run eject`
+#### Usage Example
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+To create and push a new feature branch:
+```bash
+git cleanbranch feature/new-feature
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This command creates a new branch named `feature/new-feature`, based on the latest updates from `develop`, and pushes it to the remote repository.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Automatic tabulation with `git-posh`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+To setup / enable the "automatic" tabulation within vscode (or persay, a powershell terminal), you will need to install a package:
 
-## Learn More
+```ps1
+Install-Module posh-git -Scope CurrentUser
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You will then need to import it to your current powershell session:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```ps1
+Import-Module posh-git
+```
 
-### Code Splitting
+Finally, if you want to always have it with you, add it to your profile:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```ps1
+Add-PoshGitToProfile
+```
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---

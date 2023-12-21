@@ -1,0 +1,205 @@
+// This shouldn't be here but fuck it !
+.pl-main_content {
+  width: 100vw;
+  overflow-x: hidden !important;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2vh;
+
+  // Style for the list of projects
+  .pl-project_list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 4rem 2rem;
+    align-items: center;
+
+    // Style for each project item
+    .pl-project_child {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      border-radius: 1rem;
+      background: #212121;
+      height: 40vh;
+      width: 40vw;
+      transition: border 0.2s ease-in-out;
+      border: 2px solid transparent;
+
+      // Style for the project icon
+      .pl-placeholder_projectIcon {
+        border-radius: 0.25rem;
+        background: #404040;
+        width: 7vw;
+        height: 12vh;
+        min-width: 6vw;
+        min-height: 12vh;
+        margin-left: 2vw;
+        margin-top: 3vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.2s ease-in;
+        border: 2px solid transparent;
+        position: relative;
+
+        .pl-placeholder_text_icon {
+          color: #fff;
+          text-align: center;
+          font-family: Inter;
+          font-size: 3rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
+
+      .pl-placeholder_projectIcon::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 2px solid transparent;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0);
+      }
+
+      // Style for the project info section
+      .pl-project_info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+
+        // Container for project title and favorite button
+        .pl-project_title_and_favs {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-left: 1vw;
+
+          // Title and description common styles
+          .pl-project_title {
+            margin: 0;
+            line-height: 1.2;
+            text-overflow: ellipsis;
+          }
+
+          // Specific styles for the project title
+          .pl-project_title {
+            margin-top: 3vh;
+            color: #fff;
+            font-family: Inter;
+            font-size: 2.5rem;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+          }
+
+          // Button to toggle favorite status
+          .pl-project_button_favorite {
+            background-color: transparent;
+            border: none;
+
+            // Styles for the favorite icon
+            .pl-project_favorite {
+              color: #383838;
+              font-size: 32px;
+              margin-top: 1.5vh;
+              margin-right: 0.5vw;
+              transition: 0.2s ease-in;
+            }
+
+            // Hover effects for the favorite icon
+            .pl-project_favorite:hover {
+              color: #8d8d8d;
+              cursor: pointer;
+              transition: 0.2s ease-in;
+            }
+          }
+        }
+
+        // Styles for the project description
+        .pl-created_project_description {
+          display: flex;
+          margin-top: 1vh;
+          margin: 0.5vh 1vw;
+          line-height: 1.2;
+          text-overflow: ellipsis;
+          color: #575757;
+          font-family: Inter;
+          font-size: 15px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: normal;
+        }
+
+        // Bottom (line and issues)
+        .pl-bottom_layout {
+          display: flex;
+          margin-top: auto;
+          justify-content: center;
+          flex-direction: column;
+
+          // Line styling
+          .pl-line_issues {
+            width: 40%;
+            margin-left: 5vw;
+            background: #6a6a6a;
+          }
+
+          // Issues count styling
+          .pl-project_issues_total {
+            margin-left: 9.5vw;
+            color: #fff;
+            font-family: Inter;
+            font-size: 15px;
+            font-weight: 400;
+          }
+        }
+      }
+
+      // Hover effects for project items
+      &:hover {
+        border-color: #505050;
+
+        .pl-placeholder_projectIcon {
+          animation: border-glow 3s ease-in-out infinite;
+          transition: 0.2s ease-in;
+        }
+      }
+    }
+  }
+
+  // Style for when there are no projects
+  .pl-empty_projects {
+    display: flex;
+    margin-top: 300px;
+    width: 18%;
+    height: 18%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    // Styles of the icon if empty projects
+    .pl-svg {
+      margin-top: 5vh;
+      width: 15vw;
+      height: 15vh;
+    }
+
+    // Styles for the info text below the icon
+    .pl-empty_text {
+      width: 40vw;
+      margin-top: 5rem;
+      color: #8d8d8d;
+      text-align: center;
+      font-family: Inter;
+      font-size: 3vw;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+}
