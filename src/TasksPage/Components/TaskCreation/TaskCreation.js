@@ -4,9 +4,11 @@ import { useParams } from "react-router";
 import Modal from "react-modal";
 import RichText from "../RichText";
 import { IoMdClose } from "react-icons/io";
+import "./TaskCreation.scss";
 
 import makeAnimated from "react-select/animated";
 const animatedComponents = makeAnimated();
+
 
 const getTextColor = (backgroundColor) => {
   // Un calcul simple pour déterminer si le texte doit être clair ou foncé
@@ -25,7 +27,7 @@ const getTextColor = (backgroundColor) => {
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     borderColor: state.isFocused ? "#FFFFFF" : "gray",
     boxShadow: state.isFocused ? "0 0 0 0px #FFFFFF" : null,
     "&:hover": {
@@ -34,22 +36,22 @@ const customStyles = {
   }),
   option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isFocused ? "#202020" : "#232323",
+    backgroundColor: state.isFocused ? "#363636" : "#363636",
     color: "white",
     ":hover": {
       cursor: "pointer",
-      backgroundColor: "#2d2d2d",
+      backgroundColor: "#343434",
       color: "white",
     },
   }),
   noOptionsMessage: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     color: "white",
   }),
   multiValue: (provided, state) => ({
     ...provided,
-    backgroundColor: "#333333",
+    backgroundColor: "#363636",
     color: "white",
   }),
   multiValueLabel: (provided, state) => ({
@@ -58,7 +60,7 @@ const customStyles = {
   }),
   menu: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     borderRadius: "0",
     marginTop: 0,
     marginBottom: 0,
@@ -67,6 +69,7 @@ const customStyles = {
     ...provided,
     padding: 0,
     border: "1px solid white",
+    borderRadius: "0 0 8px 8px"
   }),
 };
 
@@ -440,7 +443,7 @@ const TaskCreation = ({
           </div>
         </div>
         <div className="tp-submit_cancel">
-          <button className="tag-button" onClick={handleCloseCreateTask}>
+          <button className="tag-button_cancel" onClick={handleCloseCreateTask}>
             Cancel
           </button>
           <button className="tag-button" onClick={createNewTask}>
