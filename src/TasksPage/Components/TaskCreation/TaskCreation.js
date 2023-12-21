@@ -229,7 +229,12 @@ const TaskCreation = ({
   const [taskDescription, setTaskDescription] = useState("");
   const [editorContent, setEditorContent] = useState("");
 
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+
+  const handleUserSelection = (selectedOptions) => {
+    setSelectedUsers(selectedOptions); // Update state when users are selected
+  };
 
   const handleCloseCreateTask = () => setIsOpenCreateTask(false);
 
@@ -240,6 +245,7 @@ const TaskCreation = ({
     statusId,
     complexity,
     dueDate,
+    users,
     tags
   ) {
     const token = localStorage.getItem("token");
@@ -257,6 +263,7 @@ const TaskCreation = ({
           statusId,
           complexity,
           dueDate,
+          users,
           tags,
         }),
       });
@@ -325,8 +332,10 @@ const TaskCreation = ({
       1, //statusId,
       0, //complexity,
       0, //dueDate,
+      selectedUsers.map(user => user.value),
       selectedTags.map((tag) => tag.value)
     );
+    console.log(selectedUsers);
     handleCloseCreateTask();
   };
 
@@ -401,6 +410,7 @@ const TaskCreation = ({
               }}
               isMulti
               options={formattedUsers}
+              onChange={handleUserSelection} 
             />
           </div>
           <div className="tp-labels">
