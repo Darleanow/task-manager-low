@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { login } from "../Utils/Routing/store";
+import { checkTokenValidity } from "../Utils/BulkUtilsImport";
+import { jwtDecode } from "jwt-decode";
+import { HashLoader } from "react-spinners";
 import {
   makeErrorToast,
 } from "../Utils/Misc/ToastsTools";
@@ -12,7 +15,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./AuthenPage.scss";
 
 const AuthentPage = () => {
-  const [isLogged, setIsLogged] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [canBeRedirected, setCanBeRedirected] = useState(false);
   const [email, setEmail] = useState("");
@@ -26,6 +28,12 @@ const AuthentPage = () => {
   const [isMatchingPassword, setIsMatchingPassword] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidAuth, setIsValidAuth] = useState(false);
+  const [setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const savedEmail = localStorage.getItem("email");
+  const savedFullName = localStorage.getItem("fullName");
 
   useEffect(() => {
     const validPasswordRegex =
@@ -106,14 +114,12 @@ const AuthentPage = () => {
     setIsValidAuth(isValidEmail && isValidPassword && isMatchingPassword);
   }, [isValidEmail, isValidPassword, isMatchingPassword]);
 
-  const [userData, setUserData] = useState(null);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("email");
-    const savedFullName = localStorage.getItem("fullName");
+    const delay = 2000;
+
+    
+
     if (savedEmail) setEmail(savedEmail);
     if (savedFullName) setFullName(savedFullName);
 
@@ -121,22 +127,32 @@ const AuthentPage = () => {
       setCanBeRedirected(!canBeRedirected);
     }
 
-    if (checkTokenValidity()) {
-      fetchUserData();
+    const token = localStorage.getItem("token");
+    if (token) {
+      if (checkTokenValidity()) {
+        const userDetails = jwtDecode(token);
+        dispatch(login(userDetails));
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/projects");
+        }, delay);
+      } else {
+        // Token is invalid
+        setIsLoading(false);
+      }
     } else {
-      setIsLogged(false);
+      // No token found
+      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-    console.log("Auth :", isValidAuth);
-    console.log("Email : ", isValidEmail);
-    console.log("Password :", isValidPassword);
     if (isValidAuth) {
-      const response = await fetch("http://localhost:3333/register", {
+      const response = await fetch("http://localhost:3333/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,12 +176,8 @@ const AuthentPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setPasswordErrorMessage(
-      "Password should be at least 8 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character."
-    );
-    setEmailErrorMessage("Please enter a valid email address.");
     setFormSubmitted(true);
-    const response = await fetch("http://localhost:3333/login", {
+    const response = await fetch("http://localhost:3333/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -175,43 +187,20 @@ const AuthentPage = () => {
     if (response.ok) {
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      localStorage.setItem("tokenExpiry", Date.now() + 3600000); // 1 hour expiry
-      localStorage.setItem("email", email);
-      localStorage.setItem("fullName", fullName);
-      setIsLogged(true);
-      dispatch(login());
+      const userDetails = jwtDecode(data.token); // Decode JWT to get user details
+      dispatch(login(userDetails));
       navigate("/projects");
     } else {
       // Handle errors
     }
   };
-
-  const checkTokenValidity = () => {
-    const tokenExpiry = localStorage.getItem("tokenExpiry");
-    return tokenExpiry && Date.now() <= parseInt(tokenExpiry);
-  };
-
-  const fetchUserData = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:3333/user", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data);
-      } else {
-        console.error("Error fetching user data");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  if (isLoading) {
+    return (
+      <div className="ap-loading">
+        <HashLoader color="#7071E8" size={120} />
+      </div>
+    );
+  }
   // Render logic
   if ((alreadyRegistered || (fullName && email)) && canBeRedirected) {
     return (
