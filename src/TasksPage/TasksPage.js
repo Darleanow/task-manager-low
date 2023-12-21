@@ -463,6 +463,7 @@ const TasksPage = () => {
               boardId={board.list_id.toString()}
               boardName={board.list_name}
               tasks={board.tasks}
+              handleTaskCreation={handleOpenCreateTask}
             />
           ))}
         </div>
