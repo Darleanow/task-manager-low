@@ -76,15 +76,14 @@
     align-items: center;
     margin-left: auto;
   }
-
-  .pp-profile {
-    margin-left: auto;
-    margin-right: 1.63rem;
-    width: 3.25rem;
-    height: 3.25rem;
+  .pp-profile_picture {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 2vw;  /* Adjust the margin as needed */
     flex-shrink: 0;
-    border-radius: 3.25rem;
   }
+  
 }
 
 .pp-second_bar {

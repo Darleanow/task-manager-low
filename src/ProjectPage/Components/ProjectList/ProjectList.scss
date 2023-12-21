@@ -175,23 +175,24 @@
   // Style for when there are no projects
   .pl-empty_projects {
     display: flex;
-    width: 100%;
-    height: 100%;
+    margin-top: 300px;
+    width: 18%;
+    height: 18%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     // Styles of the icon if empty projects
     .pl-svg {
-      margin-top: 10vh;
+      margin-top: 5vh;
       width: 15vw;
       height: 15vh;
     }
 
     // Styles for the info text below the icon
     .pl-empty_text {
-      width: 40%;
-      margin-top: 10rem;
+      width: 40vw;
+      margin-top: 5rem;
       color: #8d8d8d;
       text-align: center;
       font-family: Inter;
