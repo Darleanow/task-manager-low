@@ -1,6 +1,7 @@
 import { TbTriangleMinus2 } from "react-icons/tb";
 import { MinidenticonImg } from "../../Utils/BulkUtilsImport";
 import "./PrimaryMenuBar.scss";
+import Navbar from "../SlidingMenuBar/Navbar";
 const PrimaryMenuBar = ({ p_ProjectName, p_UserName }) => {
   return (
     <div className="pmb-menu_bar_primary">
@@ -20,6 +21,9 @@ const PrimaryMenuBar = ({ p_ProjectName, p_UserName }) => {
           />
         </div>
         <div className="pmb-user_profile">
+          {/* <Navbar handleLogout={(() => {
+
+          })} username={p_UserName}/> */}
           <MinidenticonImg
             username={p_UserName}
             saturation="90"
@@ -27,6 +31,7 @@ const PrimaryMenuBar = ({ p_ProjectName, p_UserName }) => {
             height="52"
             className="p-user_profile_picture"
           />
+
         </div>
       </div>
     </div>

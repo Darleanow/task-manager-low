@@ -3,7 +3,7 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import Card from "../Card/Card";
 import "./BoardList.scss";
 
-const BoardList = ({ boardId, boardName, tasks }) => {
+const BoardList = ({ boardId, boardName, tasks, handleTaskCreation }) => {
   const [areThereTasks, setAreThereTasks] = useState(false);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const BoardList = ({ boardId, boardName, tasks }) => {
                         p_Tags={task.tags}
                         p_Weight={task.weight}
                         p_DueDate={task.due_date}
-                        p_User={"Hello"} // TODO: Change this to assignees
+                        p_User={task.assignees}
                       />
                     </div>
                   )}
@@ -54,7 +54,7 @@ const BoardList = ({ boardId, boardName, tasks }) => {
               ))
             ) : (
               <div className="bl-no_content_container">
-                <div className="bl-icon_add">
+                <div className="bl-icon_add" onClick={handleTaskCreation}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="63"

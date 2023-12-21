@@ -356,6 +356,7 @@ const TasksPage = () => {
   // TODO: Custom Boards, filter by tags / logical operators, add boards
 
   useEffect(() => {
+    fetchTasksByProjectId(projectId)
     const token = localStorage.getItem("token");
     if (token && checkTokenValidity()) {
       const userDetails = jwtDecode(token);
@@ -374,7 +375,6 @@ const TasksPage = () => {
         label: user.username,
         photo: user.photo.props,
       }));
-
       setFormattedUsers(formatUsers);
     }
   }, [fetchedUsers]);
@@ -463,6 +463,7 @@ const TasksPage = () => {
               boardId={board.list_id.toString()}
               boardName={board.list_name}
               tasks={board.tasks}
+              handleTaskCreation={handleOpenCreateTask}
             />
           ))}
         </div>

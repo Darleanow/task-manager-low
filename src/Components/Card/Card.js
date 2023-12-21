@@ -16,7 +16,7 @@ const Card = React.memo(
     p_Tags,
     p_Weight,
     p_DueDate,
-    p_User,
+    p_User = "Darleanow",
   }) => {
     return (
       <div className="cd-container">
@@ -29,7 +29,7 @@ const Card = React.memo(
             </font>
           </div>
           <MinidenticonImg
-            username={p_User.user_name}
+            username={p_User}
             saturation="90"
             width="19"
             height="19"
@@ -37,7 +37,7 @@ const Card = React.memo(
           />
         </div>
         <div className="cd-tags">
-          {p_Tags.map((tag, index) => (
+          {p_Tags && p_Tags.map((tag, index) => (
             <span
               key={index}
               style={{

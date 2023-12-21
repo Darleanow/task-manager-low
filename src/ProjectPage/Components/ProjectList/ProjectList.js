@@ -55,7 +55,8 @@ const ProjectList = () => {
    * @async
    */
   const setProjectAsFavourite = useCallback(
-    async (projectId, isFavourite) => {
+    async (event, projectId, isFavourite) => {
+      event.stopPropagation();
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(
@@ -114,8 +115,9 @@ const ProjectList = () => {
                 <div className="pl-project_title_and_favs">
                   <p className="pl-project_title">{project.project_name}</p>
                   <button
-                    onClick={() =>
+                    onClick={(event) =>
                       setProjectAsFavourite(
+                        event,
                         project.project_id,
                         project.status !== "Favori"
                       )
