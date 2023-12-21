@@ -17,51 +17,48 @@ function Navbar({ handleLogout, username }) {
       <IconContext.Provider value={{ color: "#FFF" }}>
         <div className="navbar">
           <Link to="#" className="menu-bars">
-             <div className="project-page-icon" onClick={showSidebar}>
-                <MinidenticonImg
-                  username={username}
-                  saturation="90"
-                  width="45"
-                  height="45"
-                />
-              </div>
+            <div className="project-page-icon" onClick={showSidebar}>
+              <MinidenticonImg
+                username={username}
+                saturation="90"
+                width="40"
+                height="40"
+                className={"n-minidenticon spacing"}
+              />
+            </div>
           </Link>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
           <div className="nav-menu-items" onClick={showSidebar}>
             <div className="navbar-top-row">
-            <div className="navbar-profile-icon">
+              <div className="navbar-profile-icon">
                 <MinidenticonImg
                   username={username}
                   saturation="90"
-                  width="45"
-                  height="45"
+                  width="40"
+                  height="40"
+                  className={"n-minidenticon spacing2"}
                 />
               </div>
               <div className="navbar-username">{username}</div>
               <div className="navbar-toggle">
-                <Link to="#" className="menu-close">
-                  <AiIcons.AiOutlineClose  style={{ fontSize: '1.5em' }}/>
-                </Link>
+                <AiIcons.AiOutlineClose className="close-icon" />
               </div>
             </div>
             <div className="navbar-body">
               <div className="sectionDivider"></div>
               <div className="nav-text">
                 <Link to="/projects">
-                  <AiIcons.AiFillProject />
                   <p className="nav-text-text">Edit profile picture</p>
                 </Link>
               </div>
               <div className="nav-text">
                 <Link to="/projects">
-                  <AiIcons.AiFillProject />
                   <p className="nav-text-text">Change username</p>
                 </Link>
               </div>
               <div className="nav-text">
                 <Link to="/projects">
-                  <AiIcons.AiFillProject />
                   <p className="nav-text-text">Reset password</p>
                 </Link>
               </div>
@@ -71,7 +68,6 @@ function Navbar({ handleLogout, username }) {
 
                 <div className="nav-text" onClick={handleLogout}>
                   <Link to="/">
-                    <Io5Icons.IoLogOut />
                     <p className="nav-text-text">Sign Out</p>
                   </Link>
                 </div>

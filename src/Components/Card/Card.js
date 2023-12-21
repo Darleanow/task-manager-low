@@ -37,7 +37,7 @@ const Card = React.memo(
           />
         </div>
         <div className="cd-tags">
-          {/* {p_Tags.map((tag, index) => (
+          {p_Tags && p_Tags.map((tag, index) => (
             <span
               key={index}
               style={{
@@ -48,7 +48,7 @@ const Card = React.memo(
             >
               {tag.tag_name}
             </span>
-          ))} */}
+          ))}
         </div>
         <font className="cd-task_id"> #{p_TaskId} </font>
       </div>

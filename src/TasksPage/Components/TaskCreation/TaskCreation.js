@@ -245,7 +245,7 @@ const TaskCreation = ({
     statusId,
     complexity,
     dueDate,
-    users,
+    // users,
     tags
   ) {
     const token = localStorage.getItem("token");
@@ -263,7 +263,7 @@ const TaskCreation = ({
           statusId,
           complexity,
           dueDate,
-          users,
+          // users,
           tags,
         }),
       });
@@ -332,10 +332,9 @@ const TaskCreation = ({
       1, //statusId,
       0, //complexity,
       0, //dueDate,
-      selectedUsers.map(user => user.value),
+      // selectedUsers.map(user => user.value),
       selectedTags.map((tag) => tag.value)
     );
-    console.log(selectedUsers);
     handleCloseCreateTask();
   };
 
