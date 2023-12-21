@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   background-color: #252525;
 }
 
@@ -11,4 +12,338 @@ html, body {
   display: flex;
   flex-direction: row;
   gap: 1vw;
+}
+
+// Define color and font variables
+$color-border: #505050;
+$color-background: #2e2e2e;
+$color-dropdown-border: #969696;
+$color-dropdown-bg: #242424;
+$color-dropdown-text: #969696;
+$color-search-bg: #333;
+$color-search-text: #acabab;
+$color-button-border: #717171;
+$color-button-bg: #232323;
+$color-button-text: #b4b4b4;
+$color-button-hover-bg: #717171;
+$color-button-hover-border: #232323;
+$font-family-inter: "Inter", sans-serif;
+
+// Mixin for flexbox centering
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Mixin for common text styles
+@mixin text-style(
+  $size,
+  $weight: normal,
+  $line-height: normal,
+  $text-color: $color-dropdown-text
+) {
+  font-family: $font-family-inter;
+  font-size: $size;
+  font-style: normal;
+  font-weight: $weight;
+  line-height: $line-height;
+  color: $text-color;
+}
+
+// Extendable placeholder for button hover state
+%button-hover-state {
+  border: 1px solid $color-button-hover-border;
+  background: $color-button-hover-bg;
+  transition: 0.2s ease-in;
+}
+
+.smb-menu_bar_secondary {
+  @include flex-center;
+  justify-content: space-between;
+  width: 100vw;
+  height: 8.59vh;
+  border-bottom: 1px solid $color-border;
+  background: $color-background;
+  user-select: none;
+
+  :focus {
+    outline: none;
+  }
+
+  .smb-board_layouts {
+    flex: none;
+    margin-right: 2vw;
+  }
+
+  .smb-board_dropdown {
+    @include text-style(1.7vh);
+    width: 176px;
+    height: 4.59vh;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 0.5px solid $color-dropdown-border;
+    background: $color-dropdown-bg;
+    padding-left: 10px;
+    margin-left: 50px;
+
+    .smb-dropdown_option {
+      @include text-style(1.7vh);
+    }
+  }
+
+  .smb-search_filters_container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0 1vw;
+
+    .smb-search_filters {
+      width: 95%;
+      height: 4.59vh;
+      margin: 0 20px;
+      padding: 0 10px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      border: 0.5px solid $color-dropdown-border;
+      background: $color-search-bg;
+      @include text-style(2vh);
+      color: $color-search-text;
+      transition: 0.2s ease-in;
+    }
+
+    .smb-search_filters:focus {
+      transition: 0.2s ease-in;
+      border: 0.5px solid $color-button-bg;
+    }
+  }
+
+  .smb-small_buttons {
+    flex: none;
+    @include flex-center;
+  }
+
+  .smb-small_action_button {
+    @include text-style(1.5vh);
+    width: 4.9vw;
+    height: 3.4vh;
+    margin: 3.2vh 2.3vh;
+    border-radius: 8px;
+    border: 1px solid $color-button-border;
+    background: $color-button-bg;
+    color: $color-button-text;
+    text-align: center;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+
+    &:hover {
+      @extend %button-hover-state;
+    }
+  }
+}
+
+.tp-modal {
+  position: absolute;
+  top: 4rem;
+  left: 20rem;
+  right: 20rem;
+  bottom: 4rem;
+  border-radius: 2rem;
+  border: 2px solid #626262;
+  background: #232323;
+}
+
+.tp-modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(27, 27, 27, 0.93);
+}
+
+.tp-flex_content {
+  .tp-flex_first_bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 25px;
+    margin-top: 3vh;
+    margin-left: 2vw;
+
+    .tp-title {
+      color: #979797;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .tp-close {
+      color: #4d4d4d;
+      font-size: 32px;
+      cursor: pointer;
+      transition: 0.2s ease-in;
+    }
+
+    .tp-close:hover {
+      color: #666666;
+      transition: 0.2s ease-in;
+    }
+  }
+
+  .tp-input_title {
+    margin-left: 3.5vw;
+    border-radius: 8px;
+    border: 1px solid #6a6a6a;
+    background: none;
+    height: 4vh;
+    width: calc(100% - 7.2vw);
+    font-size: 16px;
+    font-weight: 400;
+    font-family: "Inter";
+    text-indent: 5px;
+    color: white;
+  }
+
+  .tp-flex_second_bar {
+    margin-top: 1vh;
+    margin-left: 2vw;
+    padding: 0 25px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 2vw;
+    .tp-description {
+      color: #979797;
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+}
+
+.tp-select_modal {
+  .react-select__control {
+    background-color: rgb(71, 71, 71) !important;
+    border-color: gray;
+
+    &:hover {
+      border-color: blue;
+    }
+  }
+
+  .react-select__option {
+    background-color: white;
+    color: black;
+
+    &:hover {
+      background-color: lightgray; /* Hover background color */
+      color: black; /* Text color on hover */
+    }
+  }
+
+  .react-select__multi-value {
+    background-color: rgb(161, 33, 123) !important;
+  }
+}
+
+.tag-background {
+  position: absolute;
+  top: -8vh;
+  left: -45vh;
+  z-index: 999999999;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(27, 27, 27, 0.93);
+}
+
+.tag-creation {
+  background-color: rgb(27, 27, 27);
+  border: 1px solid white;
+  border-radius: 8px;
+  width: 30vw;
+  height: 35vh;
+  position: absolute;
+  margin-top: 40vh;
+  margin-left: calc(50% - 15vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tag-label {
+  color: #979797;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-left: 3vw;
+}
+
+.tag-input {
+  margin: 0 4vw;
+  margin-right: 5vw;
+  margin-top: -10px;
+  border-radius: 8px;
+  border: 1px solid #6a6a6a;
+  background-color: rgb(27, 27, 27);
+  color: white;
+  height: 3vh;
+}
+
+.tag-input2 {
+  margin-left: calc(50% - 30px);
+  margin-top: -10px;
+}
+
+.tag-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 2vw;
+}
+
+.tag-button {
+  border: 1px solid grey;
+  background-color: #242424;
+  color: white;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+
+.tag-button:hover {
+  cursor: pointer;
+  background-color: #363636;
+}
+
+.tp-button_create_tag {
+  color: white;
+  background-color: #242424;
+  border: 1px solid grey;
+  margin-right: 2vw;
+  margin-left: 2vw;
+  border-radius: 4px;
+  height: 5vh;
+}
+
+.tp-button_create_tag:hover {
+  cursor: pointer;
+  background-color: #2b2b2b;
+}
+
+.tp-flex_more_options {
+  display: flex;
+  justify-content: center;
+}
+
+.tp-labels, .tp-assignees{
+  margin-left: 3.2vw;
+  margin-right: 3.7vw;
+}
+
+.tp-label_select {
+  color: #979797;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import "./ProjectList.scss";
 
 /**
@@ -10,6 +11,7 @@ import "./ProjectList.scss";
  */
 const ProjectList = () => {
   const userId = useSelector((state) => state.auth.user.user_id);
+  const navigate = useNavigate();
   const noProjectsIcon = process.env.PUBLIC_URL + "/images/NoProject.svg";
   const [hasProjects, setHasProjects] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -100,7 +102,9 @@ const ProjectList = () => {
       {hasProjects ? (
         <div className="pl-project_list">
           {projects.map((project) => (
-            <div key={project.project_id} className="pl-project_child">
+            <div key={project.project_id} className="pl-project_child" onClick={(()=>{
+              navigate(`/projects/${project.project_id}`);
+            })}>
               <div className="pl-placeholder_projectIcon">
                 <p className="pl-placeholder_text_icon">
                   {project.project_name.at(0).toUpperCase()}

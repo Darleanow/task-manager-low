@@ -24,11 +24,14 @@ const AuthentPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const savedEmail = localStorage.getItem("email");
+  const savedFullName = localStorage.getItem("fullName");
+
   useEffect(() => {
     const delay = 2000;
 
-    const savedEmail = localStorage.getItem("email");
-    const savedFullName = localStorage.getItem("fullName");
+    
+
     if (savedEmail) setEmail(savedEmail);
     if (savedFullName) setFullName(savedFullName);
 
@@ -99,26 +102,26 @@ const AuthentPage = () => {
     }
   };
 
-  const fetchUserData = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:3333/users/get_user", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // const fetchUserData = async () => {
+  //   const token = localStorage.getItem("token");
+  //   try {
+  //     const response = await fetch("http://localhost:3333/users/get_user", {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data);
-      } else {
-        console.error("Error fetching user data");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setUserData(data);
+  //     } else {
+  //       console.error("Error fetching user data");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   if (isLoading) {
     return (

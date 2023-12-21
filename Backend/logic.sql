@@ -29,14 +29,32 @@ CREATE TABLE IF NOT EXISTS Statuses (
 CREATE TABLE IF NOT EXISTS Tasks (
     task_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT,
+    list_id INT, -- Column for associating a task with a list
     task_name VARCHAR(255) NOT NULL,
     description TEXT,
-    status_id INT,
+    status_id INT NULL, -- Made nullable to allow tasks without a status
     complexity INT,
-    creation_date DATE NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     due_date DATE,
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE SET NULL,
+    FOREIGN KEY (list_id) REFERENCES Lists(list_id) ON DELETE SET NULL,
     FOREIGN KEY (status_id) REFERENCES Statuses(status_id) ON DELETE SET NULL
+);
+
+-- Création de la table des Tags
+CREATE TABLE IF NOT EXISTS Tags (
+    tag_id INT AUTO_INCREMENT PRIMARY KEY,
+    tag_name VARCHAR(255) NOT NULL UNIQUE,
+    tag_color VARCHAR(7) -- Format HEX de couleur, ex: #FFFFFF
+);
+
+-- Table de jointure TaskTags pour associer des tags aux tâches
+CREATE TABLE IF NOT EXISTS TaskTags (
+    task_id INT,
+    tag_id INT,
+    PRIMARY KEY (task_id, tag_id),
+    FOREIGN KEY (task_id) REFERENCES Tasks(task_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES Tags(tag_id) ON DELETE CASCADE
 );
 
 -- Table des Assignations de Tâches pour lier les utilisateurs aux tâches qui leur sont assignées
@@ -85,5 +103,14 @@ CREATE TABLE IF NOT EXISTS Notifications (
     metadatas TEXT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Lists (
+    list_id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    list_name VARCHAR(255) NOT NULL,
+    status_id INT, -- Associating a status with a list
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE,
+    FOREIGN KEY (status_id) REFERENCES Statuses(status_id) ON DELETE SET NULL
 );
 

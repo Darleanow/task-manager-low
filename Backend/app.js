@@ -4,6 +4,7 @@ const { config } = require("dotenv");
 
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 config(); // setup dotenv
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 
 app.use('/users', userRoutes);
 app.use('/projects', projectRoutes);
+app.use('/tasks', taskRoutes);
 
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
