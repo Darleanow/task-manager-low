@@ -29,12 +29,12 @@ CREATE TABLE IF NOT EXISTS Statuses (
 CREATE TABLE IF NOT EXISTS Tasks (
     task_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT,
-    list_id INT, -- New column for associating a task with a list
+    list_id INT, -- Column for associating a task with a list
     task_name VARCHAR(255) NOT NULL,
     description TEXT,
-    status_id INT, -- This can be kept or removed depending on your workflow.
+    status_id INT NULL, -- Made nullable to allow tasks without a status
     complexity INT,
-    creation_date DATE NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     due_date DATE,
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE SET NULL,
     FOREIGN KEY (list_id) REFERENCES Lists(list_id) ON DELETE SET NULL,

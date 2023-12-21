@@ -46,7 +46,7 @@ const BoardList = ({ boardId, boardName, tasks }) => {
                         p_Tags={task.tags}
                         p_Weight={task.weight}
                         p_DueDate={task.due_date}
-                        p_User={"Hello"}
+                        p_User={"Hello"} // TODO: Change this to assignees
                       />
                     </div>
                   )}

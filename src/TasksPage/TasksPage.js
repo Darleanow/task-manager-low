@@ -45,90 +45,74 @@ const TasksPage = () => {
   const [fetchedUsers, setFetchedUsers] = useState([]);
   const [formattedUsers, setFormattedUsers] = useState([]);
 
-  // const onDragEnd = (result) => {
-  //   const { source, destination } = result;
+  const onDragEnd = async (result) => {
+    const { source, destination, draggableId } = result;
 
-  //   // dropped outside the list
-  //   if (!destination) return;
-
-  //   if (source.droppableId === destination.droppableId) {
-  //     const reorderedItems = reorder(
-  //       boards[source.droppableId].tasks,
-  //       source.index,
-  //       destination.index
-  //     );
-  //     setBoards((prevBoards) => ({
-  //       ...prevBoards,
-  //       [source.droppableId]: {
-  //         ...prevBoards[source.droppableId],
-  //         tasks: reorderedItems,
-  //       },
-  //     }));
-  //   } else {
-  //     const { sourceClone, destClone } = move(
-  //       boards[source.droppableId].tasks,
-  //       boards[destination.droppableId].tasks,
-  //       source,
-  //       destination
-  //     );
-  //     setBoards((prevBoards) => ({
-  //       ...prevBoards,
-  //       [source.droppableId]: {
-  //         ...prevBoards[source.droppableId],
-  //         tasks: sourceClone,
-  //       },
-  //       [destination.droppableId]: {
-  //         ...prevBoards[destination.droppableId],
-  //         tasks: destClone,
-  //       },
-  //     }));
-  //   }
-  // };
-
-  const onDragEnd = (result) => {
-    const { source, destination } = result;
-  
     if (!destination) return;
-  
-    const sourceIndex = boards.findIndex(board => board.list_id.toString() === source.droppableId);
-    const destIndex = boards.findIndex(board => board.list_id.toString() === destination.droppableId);
-  
+
+    const sourceIndex = boards.findIndex(
+      (board) => board.list_id.toString() === source.droppableId
+    );
+    const destIndex = boards.findIndex(
+      (board) => board.list_id.toString() === destination.droppableId
+    );
+
     if (sourceIndex === -1 || destIndex === -1) return;
-  
+
     if (source.droppableId === destination.droppableId) {
-      // Déplacement dans la même liste
+      // Handle reordering in the same list
       const reorderedTasks = reorder(
         boards[sourceIndex].tasks,
         source.index,
         destination.index
       );
-      const newBoards = Array.from(boards);
-      newBoards[sourceIndex] = {
-        ...boards[sourceIndex],
-        tasks: reorderedTasks,
-      };
-      setBoards(newBoards);
+      setBoards((prevBoards) => {
+        const newBoards = Array.from(prevBoards);
+        newBoards[sourceIndex] = {
+          ...newBoards[sourceIndex],
+          tasks: reorderedTasks,
+        };
+        return newBoards;
+      });
     } else {
-      // Déplacement entre listes différentes
-      const { sourceClone, destClone } = move(
-        boards[sourceIndex].tasks,
-        boards[destIndex].tasks,
-        source,
-        destination
+      // Handle moving task between different lists
+      const task = boards[sourceIndex].tasks.find(
+        (t) => t.task_id.toString() === draggableId
       );
-      const newBoards = Array.from(boards);
-      newBoards[sourceIndex] = {
-        ...boards[sourceIndex],
-        tasks: sourceClone,
-      };
-      newBoards[destIndex] = {
-        ...boards[destIndex],
-        tasks: destClone,
-      };
-      setBoards(newBoards);
+
+      if (!task) return;
+
+      await updateTaskList(task.task_id, parseInt(destination.droppableId));
+      // Only update the frontend, don't re-fetch from backend
+      handleTaskMove(sourceIndex, destIndex, task, source, destination);
     }
   };
-  
+
+  const handleTaskMove = (
+    sourceIndex,
+    destIndex,
+    task,
+    source,
+    destination
+  ) => {
+    const newSourceTasks = Array.from(boards[sourceIndex].tasks);
+    newSourceTasks.splice(source.index, 1);
+    const newDestTasks = Array.from(boards[destIndex].tasks);
+    newDestTasks.splice(destination.index, 0, task);
+
+    setBoards((prevBoards) => {
+      const newBoards = Array.from(prevBoards);
+      newBoards[sourceIndex] = {
+        ...newBoards[sourceIndex],
+        tasks: newSourceTasks,
+      };
+      newBoards[destIndex] = {
+        ...newBoards[destIndex],
+        tasks: newDestTasks,
+      };
+      return newBoards;
+    });
+  };
 
   const userId = useSelector((state) => state.auth.user.user_id);
   const { projectId } = useParams();
@@ -216,18 +200,53 @@ const TasksPage = () => {
       );
       if (!listsResponse.ok) throw new Error("Failed to fetch lists");
       const lists = await listsResponse.json();
-      const boardsWithValidTasks = lists.map(board => ({
+      const boardsWithValidTasks = lists.map((board) => ({
         ...board,
-        tasks: board.tasks && board.tasks.length > 0 && board.tasks[0].task_id != null 
-               ? board.tasks 
-               : [] // Filtrer les tâches 'null'
+        tasks:
+          board.tasks &&
+          board.tasks.length > 0 &&
+          board.tasks[0].task_id != null
+            ? board.tasks
+            : [], // Filtrer les tâches 'null'
       }));
+      console.log("Fetched Lists: ", lists);
       setBoards(boardsWithValidTasks);
       //setBoards(lists);
     } catch (error) {
       console.error("Error fetching lists and tasks", error);
     }
   }
+
+  const updateTaskList = async (taskId, newListId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        `http://localhost:3333/tasks/update_task_list`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ taskId, newListId, projectId }),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to update task list");
+    } catch (error) {
+      console.error("Error updating task list", error);
+    }
+  };
+
+  const updateBoardsWithReorderedTasks = (boardIndex, reorderedTasks) => {
+    setBoards((prevBoards) => {
+      const newBoards = Array.from(prevBoards);
+      newBoards[boardIndex] = {
+        ...prevBoards[boardIndex],
+        tasks: reorderedTasks,
+      };
+      return newBoards;
+    });
+  };
 
   const createBoard = async (boardName) => {
     const token = localStorage.getItem("token");
@@ -277,6 +296,8 @@ const TasksPage = () => {
 
       if (response.ok) {
         const tagsData = await response.json();
+        console.log("Tags");
+        console.log(tagsData);
         setTags(tagsData);
       } else {
         console.error("Failed to fetch tags");
@@ -343,25 +364,41 @@ const TasksPage = () => {
 
     fetchUsers();
 
-    const formatUsers = fetchedUsers.map((user) => ({
-      value: user.id,
-      label: user.username,
-      photo: user.photo.props,
-    }));
+    fetchListsAndTasks(projectId);
+  }, [projectId, dispatch]);
 
-    setFormattedUsers(formatUsers);
+  useEffect(() => {
+    if (fetchedUsers.length > 0) {
+      const formatUsers = fetchedUsers.map((user) => ({
+        value: user.id,
+        label: user.username,
+        photo: user.photo.props,
+      }));
 
+      setFormattedUsers(formatUsers);
+    }
+  }, [fetchedUsers]);
+
+  useEffect(() => {
     getTags();
+  }, []);
 
+  useEffect(() => {
     const transformedTags = tags.map((tag) => ({
       value: tag.tag_id,
       label: tag.tag_name,
       color: tag.tag_color,
     }));
-    setTagOptions(transformedTags);
+    console.log(tags);
+    console.log(transformedTags);
 
-    fetchListsAndTasks(projectId);
-  }, [projectId, dispatch]);
+    setTagOptions(transformedTags);
+  }, [tags]);
+
+  const refreshBoardData = async () => {
+    // Fetch the latest data for the board and update state
+    await fetchListsAndTasks(projectId);
+  };
 
   return (
     <>
@@ -413,6 +450,7 @@ const TasksPage = () => {
               tagOptions={tagOptions}
               setTagOptions={setTagOptions}
               fetchTasksByProjectId={fetchTasksByProjectId}
+              update_tasks={refreshBoardData}
             />
           </div>
         </div>

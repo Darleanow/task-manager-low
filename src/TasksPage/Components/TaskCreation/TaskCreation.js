@@ -235,6 +235,7 @@ const TaskCreation = ({
   tagOptions,
   setTagOptions,
   fetchTasksByProjectId,
+  update_tasks
 }) => {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
@@ -277,6 +278,7 @@ const TaskCreation = ({
       });
       if (response.ok) {
         console.log("Task created successfully");
+        update_tasks();
         fetchTasksByProjectId(projectId);
       } else {
         console.error("Failed to create task");
@@ -336,7 +338,7 @@ const TaskCreation = ({
       projectId,
       taskName,
       taskDescription,
-      0, //statusId,
+      1, //statusId,
       0, //complexity,
       0, //dueDate,
       selectedTags.map((tag) => tag.value)
@@ -372,6 +374,10 @@ const TaskCreation = ({
   const handleEditorChange = (content) => {
     setTaskDescription(content);
   };
+
+  useEffect(() => {
+    Modal.setAppElement("#root");
+  });
 
   return (
     <Modal

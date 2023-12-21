@@ -10,8 +10,8 @@ async function createTask(
   tags = [] // Array of tag IDs
 ) {
   const insertTaskQuery = `
-        INSERT INTO Tasks (project_id, task_name, description, status_id, complexity, due_date)
-        VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO Tasks (project_id, task_name, description, status_id, complexity, due_date, list_id)
+        VALUES (?, ?, ?, ?, ?, ?, 1);
       `;
 
   return new Promise((resolve, reject) => {
@@ -342,45 +342,46 @@ async function deleteList(listName, projectId) {
 
 async function getListsByProjectId(projectId) {
   const query = `
-      SELECT 
-      l.list_id,
-      l.project_id,
-      l.list_name,
-      l.status_id,
-      JSON_ARRAYAGG(
-          JSON_OBJECT(
-              'task_id', t.task_id,
-              'project_id', t.project_id,
-              'list_id', t.list_id,
-              'task_name', t.task_name,
-              'description', t.description,
-              'status_id', t.status_id,
-              'complexity', t.complexity,
-              'creation_date', t.creation_date,
-              'due_date', t.due_date,
-              'tags', (
-                  SELECT JSON_ARRAYAGG(
-                      JSON_OBJECT(
-                          'tag_id', tt.tag_id,
-                          'tag_name', tg.tag_name,
-                          'tag_color', tg.tag_color
-                      )
-                  ) 
-                  FROM TaskTags tt 
-                  LEFT JOIN Tags tg ON tt.tag_id = tg.tag_id
-                  WHERE tt.task_id = t.task_id
-              )
-          )
-      ) AS tasks
+    SELECT 
+    l.list_id,
+    l.project_id,
+    l.list_name,
+    l.status_id,
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'task_id', t.task_id,
+            'project_id', t.project_id,
+            'list_id', t.list_id,
+            'task_name', t.task_name,
+            'description', t.description,
+            'status_id', t.status_id,
+            'complexity', t.complexity,
+            'creation_date', IFNULL(t.creation_date, NOW()),
+            'due_date', t.due_date,
+            'tags', (
+                SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'tag_id', tt.tag_id,
+                        'tag_name', tg.tag_name,
+                        'tag_color', tg.tag_color
+                    )
+                ) 
+                FROM TaskTags tt 
+                LEFT JOIN Tags tg ON tt.tag_id = tg.tag_id
+                WHERE tt.task_id = t.task_id
+            )
+        )
+    ) AS tasks
     FROM 
-      Lists l
+    Lists l
     LEFT JOIN 
-      Tasks t ON l.list_id = t.list_id
+    Tasks t ON l.list_id = t.list_id AND t.project_id = l.project_id
     WHERE 
-      l.project_id = ?
+    l.project_id = ?
     GROUP BY 
-      l.list_id;
-    `;
+    l.list_id;
+`;
+
 
   return new Promise((resolve, reject) => {
     db.query(query, [projectId], (err, lists) => {
@@ -427,6 +428,24 @@ async function updateList(listId, newListName, newStatusId) {
   });
 }
 
+const updateTaskList = async (taskId, newListId, projectId) => {
+  const query = `
+      UPDATE Tasks
+      SET list_id = ?
+      WHERE task_id = ? AND project_id = ?;
+  `;
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [newListId, taskId, projectId], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   createTask,
   getTasksByProjectId,
@@ -442,4 +461,5 @@ module.exports = {
   deleteList,
   getListsByProjectId,
   updateList,
+  updateTaskList,
 };

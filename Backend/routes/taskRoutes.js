@@ -167,6 +167,16 @@ router.put("/lists/update", authenticateToken, async (req, res) => {
   }
 });
 
+router.put("/update_task_list", authenticateToken, async (req, res) => {
+  const { taskId, newListId, projectId } = req.body;
 
+  try {
+    await taskModel.updateTaskList(taskId, newListId, projectId);
+    res.status(200).send("Task list updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating task list");
+  }
+});
 
 module.exports = router;
