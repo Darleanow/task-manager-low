@@ -5,10 +5,10 @@ import Modal from "react-modal";
 import RichText from "../RichText";
 import { IoMdClose } from "react-icons/io";
 import "./TaskCreation.scss";
+import { MinidenticonImg } from "../../../Utils/BulkUtilsImport";
 
 import makeAnimated from "react-select/animated";
 const animatedComponents = makeAnimated();
-
 
 const getTextColor = (backgroundColor) => {
   // Un calcul simple pour déterminer si le texte doit être clair ou foncé
@@ -69,34 +69,15 @@ const customStyles = {
     ...provided,
     padding: 0,
     border: "1px solid white",
-    borderRadius: "0 0 8px 8px"
+    borderRadius: "0 0 8px 8px",
+    maxHeight: "150px",
   }),
-};
-
-const lightenColor = (color, percent) => {
-  const num = parseInt(color.slice(1), 16),
-    amt = Math.round(2.55 * percent),
-    R = (num >> 16) + amt,
-    B = ((num >> 8) & 0x00ff) + amt,
-    G = (num & 0x0000ff) + amt;
-
-  return (
-    "#" +
-    (
-      0x1000000 +
-      Math.max(0, Math.min(255, R)) * 0x10000 +
-      Math.max(0, Math.min(255, B)) * 0x100 +
-      Math.max(0, Math.min(255, G))
-    )
-      .toString(16)
-      .slice(1)
-  );
 };
 
 const otherCustomStyles = {
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     borderColor: state.isFocused ? "#FFFFFF" : "gray",
     boxShadow: state.isFocused ? "0 0 0 0px #FFFFFF" : null,
     "&:hover": {
@@ -105,12 +86,12 @@ const otherCustomStyles = {
   }),
   noOptionsMessage: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     color: "white",
   }),
   multiValue: (provided, state) => ({
     ...provided,
-    backgroundColor: "#333333",
+    backgroundColor: "#363636",
     color: "white",
   }),
   multiValueLabel: (provided, state) => ({
@@ -119,7 +100,7 @@ const otherCustomStyles = {
   }),
   menu: (provided, state) => ({
     ...provided,
-    backgroundColor: "#232323",
+    backgroundColor: "#363636",
     borderRadius: "0",
     marginTop: 0,
     marginBottom: 0,
@@ -128,29 +109,32 @@ const otherCustomStyles = {
     ...provided,
     padding: 0,
     border: "1px solid white",
-    borderRadius: "8px",
-    maxHeight: "100px", // Set a maximum height
-    overflowY: "auto", // Enable vertical scrolling
+    borderRadius: "0 0 8px 8px",
+    maxHeight: "150px",
+    overflowY: "auto",
   }),
   option: (provided, state) => {
-    const baseColor = state.data.color || "#232323"; // Fallback color if none provided
-    const backgroundColor = state.isFocused ? "#202020" : baseColor;
-    const hoverBackgroundColor = lightenColor(baseColor, -10); // Darken on hover
+    const baseColor = state.data.color || "#363636";
+    const backgroundColor = state.isFocused ? "#363636" : "#363636";
     const textColor = getTextColor(backgroundColor);
-    const borderColor = lightenColor(baseColor, 10); // Lighten by 10%
 
     return {
       ...provided,
-      backgroundColor:
-        state.isFocused || state.isSelected
-          ? hoverBackgroundColor
-          : backgroundColor,
+      backgroundColor: backgroundColor,
       color: textColor,
-      borderColor,
-      borderWidth: 3,
-      borderStyle: "solid",
+      display: "flex",
+      alignItems: "center",
+      ":before": {
+        content: '""',
+        display: "block",
+        marginRight: 8,
+        width: 15,
+        height: 6,
+        borderRadius: "6px",
+        backgroundColor: baseColor,
+      },
       ":hover": {
-        backgroundColor: hoverBackgroundColor,
+        backgroundColor: "#343434",
         color: "white",
       },
     };
@@ -161,17 +145,14 @@ const CustomOption = (props) => {
   return (
     <components.Option {...props}>
       <div style={{ display: "flex", alignItems: "center" }}>
-        {props.data.photo && (
-          <img
-            src={props.data.picture}
-            alt={props.data.label}
-            style={{
-              width: props.data.photo.width,
-              height: props.data.photo.height,
-              marginRight: 10,
-            }}
+        {
+          <MinidenticonImg
+            username={props.data.photo.username}
+            saturation={props.data.photo.saturation}
+            width={props.data.photo.width}
+            height={props.data.photo.height}
           />
-        )}
+        }
         {props.data.label}
       </div>
     </components.Option>
@@ -238,10 +219,10 @@ const TaskCreation = ({
   tagOptions,
   setTagOptions,
   fetchTasksByProjectId,
-  update_tasks
+  update_tasks,
 }) => {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
-
+  console.log(formattedUsers);
   const { projectId } = useParams();
 
   const [taskName, setTaskName] = useState("");
@@ -442,11 +423,11 @@ const TaskCreation = ({
             />
           </div>
         </div>
-        <div className="tp-submit_cancel">
+        <div className="tp-submit_form">
           <button className="tag-button_cancel" onClick={handleCloseCreateTask}>
             Cancel
           </button>
-          <button className="tag-button" onClick={createNewTask}>
+          <button className="tag-button_validate_form" onClick={createNewTask}>
             Confirm
           </button>
         </div>
